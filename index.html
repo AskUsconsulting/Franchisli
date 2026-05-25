@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Franchisli — Franchise Management Software</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --brand: #2c4fa3;
+    --brand-dark: #1e3a7a;
+    --brand-light: #f0f3fb;
+    --brand-mid: #dde4f5;
+    --accent: #d95f3b;
+    --accent-light: #fdf2ee;
+    --text-primary: #1a1f2e;
+    --text-secondary: #52596b;
+    --text-muted: #8a9099;
+    --bg: #ffffff;
+    --bg-secondary: #f8f9fb;
+    --border: #e4e8ef;
+    --border-light: #edf0f5;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --radius-lg: 16px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04);
+    --shadow: 0 2px 6px rgba(0,0,0,0.06), 0 6px 20px rgba(0,0,0,0.05);
+    --soon-bg: #eef1fb;
+    --soon-text: #3d5aa8;
+    --soon-border: #c8d2ee;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-primary);
+    background: var(--bg);
+    line-height: 1.6;
+    font-size: 16px;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    background: rgba(255,255,255,0.97);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 48px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-logo {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    color: var(--brand);
+    text-decoration: none;
+    letter-spacing: -0.4px;
+  }
+  .nav-logo span { color: var(--accent); }
+
+  .nav-center {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    list-style: none;
+  }
+
+  .nav-item { position: relative; }
+
+  .nav-item > a, .nav-item > span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+    user-select: none;
+  }
+  .nav-item > a:hover, .nav-item > span:hover,
+  .nav-item:hover > a, .nav-item:hover > span {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+  }
+
+  .nav-chevron {
+    width: 12px;
+    height: 12px;
+    opacity: 0.45;
+    transition: transform 0.2s;
+  }
+  .nav-item:hover .nav-chevron { transform: rotate(180deg); opacity: 0.7; }
+
+  /* DROPDOWN */
+  .nav-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.06);
+    min-width: 220px;
+    padding: 8px;
+    z-index: 300;
+  }
+
+  .nav-item:hover .nav-dropdown { display: block; }
+
+  .nav-dropdown-item {
+    display: block;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .nav-dropdown-item:hover { background: var(--bg-secondary); color: var(--text-primary); }
+  .nav-dropdown-item.soon { color: var(--text-muted); cursor: default; }
+  .nav-dropdown-item.soon:hover { background: transparent; color: var(--text-muted); }
+
+  .nav-dropdown-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 8px 14px 4px;
+  }
+
+  .nav-dropdown-divider {
+    height: 1px;
+    background: var(--border-light);
+    margin: 6px 8px;
+  }
+
+  .soon-pill {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    background: var(--soon-bg);
+    color: var(--soon-text);
+    padding: 2px 7px;
+    border-radius: 100px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  .nav-ctas {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .btn-ghost {
+    padding: 8px 18px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-ghost:hover { border-color: var(--brand); color: var(--brand); }
+
+  .btn-primary {
+    padding: 8px 20px;
+    border-radius: var(--radius-sm);
+    background: var(--accent);
+    color: white;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    border: none;
+    transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-primary:hover { background: #c4522f; }
+
+  /* ── HERO ── */
+  .hero {
+    background: #1a2740;
+    color: white;
+    padding: 96px 48px 88px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 80% at 80% 50%, rgba(44,79,163,0.35) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 60% at 10% 80%, rgba(217,95,59,0.1) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-size: 12.5px;
+    font-weight: 500;
+    margin-bottom: 26px;
+    color: rgba(255,255,255,0.75);
+    letter-spacing: 0.2px;
+  }
+
+  .eyebrow-dot {
+    width: 5px;
+    height: 5px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+
+  .hero h1 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 50px;
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -1.5px;
+    max-width: 680px;
+    margin-bottom: 22px;
+    color: #f0f4ff;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: #8baee8;
+  }
+
+  .hero-sub {
+    font-size: 17px;
+    color: rgba(255,255,255,0.6);
+    max-width: 500px;
+    margin-bottom: 38px;
+    line-height: 1.7;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 56px;
+  }
+
+  .btn-hero-primary {
+    padding: 13px 28px;
+    background: var(--accent);
+    color: white;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 14.5px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: all 0.15s;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-hero-primary:hover { background: #c4522f; }
+
+  .btn-hero-outline {
+    padding: 13px 28px;
+    background: transparent;
+    color: rgba(255,255,255,0.82);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14.5px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.22);
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+  .btn-hero-outline:hover { border-color: rgba(255,255,255,0.4); color: white; }
+
+  .hero-rating {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+  }
+  .rating-stars { color: #e8b84b; font-size: 13px; letter-spacing: 1.5px; }
+  .rating-bold { color: rgba(255,255,255,0.82); font-weight: 600; }
+
+  .hero-logos {
+    margin-top: 52px;
+    padding-top: 36px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    flex-wrap: wrap;
+  }
+
+  .hero-logos-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.28);
+  }
+
+  .logo-chip {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.2px;
+  }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    background: var(--brand);
+    padding: 26px 48px;
+  }
+  .stats-bar-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: white;
+    letter-spacing: -0.8px;
+  }
+  .stat-label {
+    font-size: 12.5px;
+    color: rgba(255,255,255,0.58);
+    margin-top: 3px;
+  }
+
+  /* ── SHARED SECTION ── */
+  section { padding: 80px 48px; }
+  .section-inner { max-width: 1080px; margin: 0 auto; }
+
+  .eyebrow {
+    display: inline-block;
+    background: var(--brand-light);
+    color: var(--brand);
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 100px;
+    margin-bottom: 14px;
+  }
+
+  .section-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 34px;
+    font-weight: 800;
+    letter-spacing: -0.7px;
+    line-height: 1.15;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+  }
+
+  .section-sub {
+    font-size: 16px;
+    color: var(--text-secondary);
+    max-width: 500px;
+    line-height: 1.65;
+    margin-bottom: 48px;
+  }
+
+  /* ── SOLUTIONS GRID ── */
+  .solutions-section { background: var(--bg-secondary); }
+
+  .solutions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  .sol-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 22px;
+    position: relative;
+    transition: all 0.18s;
+  }
+  .sol-card:hover { border-color: #b8c6e8; box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+  .sol-card.soon { background: var(--soon-bg); border-color: var(--soon-border); }
+  .sol-card.soon:hover { transform: none; box-shadow: none; }
+
+  .sol-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-sm);
+    background: var(--brand-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+  .sol-card.soon .sol-icon { background: rgba(44,79,163,0.07); }
+
+  .sol-icon svg { width: 18px; height: 18px; stroke: var(--brand); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .sol-card.soon .sol-icon svg { stroke: var(--soon-text); opacity: 0.7; }
+
+  .sol-badge-live {
+    position: absolute;
+    top: 14px; right: 14px;
+    background: #e8f5ec;
+    color: #2d7a47;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 100px;
+  }
+  .sol-badge-soon {
+    position: absolute;
+    top: 14px; right: 14px;
+    background: var(--soon-bg);
+    color: var(--soon-text);
+    border: 1px solid var(--soon-border);
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 100px;
+  }
+
+  .sol-card h3 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14.5px;
+    font-weight: 700;
+    margin-bottom: 7px;
+    color: var(--text-primary);
+  }
+  .sol-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.55; }
+
+  /* ── FEATURES BENTO ── */
+  .features-section { background: var(--bg); }
+
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  .bento-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 26px 22px;
+    position: relative;
+    transition: all 0.18s;
+  }
+  .bento-card:hover { box-shadow: var(--shadow-sm); border-color: #cdd6ea; }
+  .bento-card.span2 { grid-column: span 2; }
+
+  .bento-card.dark {
+    background: #1e2d4a;
+    border-color: #2a3d5e;
+    color: white;
+  }
+
+  .bento-tag {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+    color: var(--brand);
+    background: var(--brand-light);
+    padding: 3px 9px;
+    border-radius: 100px;
+    margin-bottom: 12px;
+  }
+  .bento-card.dark .bento-tag {
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.7);
+  }
+
+  .bento-card h3 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 9px;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+  .bento-card.dark h3 { color: #e8edf8; }
+
+  .bento-card p {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+  .bento-card.dark p { color: rgba(255,255,255,0.52); }
+
+  .status-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #2d7a47;
+    margin-top: 14px;
+  }
+  .status-live::before { content: ''; width: 6px; height: 6px; background: #4caf6e; border-radius: 50%; }
+
+  .status-soon {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--soon-text);
+    margin-top: 14px;
+  }
+  .status-soon::before { content: ''; width: 6px; height: 6px; background: var(--soon-text); border-radius: 50%; opacity: 0.45; }
+
+  .status-soon-light {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.45);
+    margin-top: 14px;
+  }
+  .status-soon-light::before { content: ''; width: 6px; height: 6px; background: rgba(255,255,255,0.3); border-radius: 50%; }
+
+  /* ── INDUSTRY TABS ── */
+  .industry-section { background: var(--bg-secondary); }
+
+  .ind-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+  }
+
+  .ind-tab {
+    padding: 9px 20px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .ind-tab:hover { border-color: var(--brand); color: var(--brand); }
+  .ind-tab.active { background: var(--brand); border-color: var(--brand); color: white; }
+  .ind-tab.disabled { opacity: 0.55; cursor: default; pointer-events: none; }
+
+  .ind-content { display: none; }
+  .ind-content.active { display: block; }
+
+  .ind-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  .ind-feature {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    transition: all 0.15s;
+  }
+  .ind-feature:hover { box-shadow: var(--shadow-sm); }
+
+  .ind-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-sm);
+    background: var(--brand-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .ind-icon svg { width: 16px; height: 16px; stroke: var(--brand); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  .ind-feature h4 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .ind-feature p { font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; }
+
+  /* ── PLATFORM STRIP ── */
+  .platform-section { background: var(--bg); }
+
+  .platform-strip {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+  }
+
+  .plat-item {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 14px;
+    text-align: center;
+    transition: all 0.15s;
+  }
+  .plat-item:hover { border-color: #b8c6e8; background: var(--brand-light); }
+
+  .plat-icon {
+    width: 36px;
+    height: 36px;
+    margin: 0 auto 10px;
+    background: var(--brand-light);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .plat-icon svg { width: 17px; height: 17px; stroke: var(--brand); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  .plat-item h4 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .plat-item p { font-size: 11.5px; color: var(--text-muted); line-height: 1.45; }
+
+  /* ── TESTIMONIALS ── */
+  .testimonials-section { background: var(--bg-secondary); }
+
+  .testi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .testi-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 26px 22px;
+  }
+
+  .testi-stars { color: #d4a017; font-size: 13px; letter-spacing: 2px; margin-bottom: 12px; }
+
+  .testi-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin-bottom: 18px;
+    font-style: italic;
+  }
+
+  .testi-author { display: flex; align-items: center; gap: 11px; }
+
+  .author-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--brand-light);
+    color: var(--brand);
+    font-weight: 700;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    flex-shrink: 0;
+  }
+
+  .author-name { font-weight: 700; font-size: 13.5px; color: var(--text-primary); }
+  .author-role { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+
+  /* ── CTA ── */
+  .cta-section {
+    background: #1a2740;
+    text-align: center;
+    color: white;
+    padding: 96px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 50% 100%, rgba(44,79,163,0.4) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .cta-section h2 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 40px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 16px;
+    position: relative;
+    color: #f0f4ff;
+  }
+  .cta-section p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.58);
+    max-width: 440px;
+    margin: 0 auto 36px;
+    position: relative;
+  }
+  .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; position: relative; }
+  .cta-footnote { margin-top: 24px; font-size: 12.5px; color: rgba(255,255,255,0.3); position: relative; }
+
+  /* ── FAQ ── */
+  .faq-section { background: var(--bg); }
+  .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+
+  .faq-item {
+    padding: 24px 0;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .faq-item:nth-child(odd) { padding-right: 40px; }
+  .faq-item:nth-child(even) { padding-left: 40px; border-left: 1px solid var(--border-light); }
+
+  .faq-item h4 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14.5px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+  }
+  .faq-item p { font-size: 13.5px; color: var(--text-secondary); line-height: 1.65; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #111827;
+    color: white;
+    padding: 56px 48px 28px;
+  }
+  .footer-inner { max-width: 1080px; margin: 0 auto; }
+
+  .footer-top {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 44px;
+  }
+
+  .footer-logo {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    color: white;
+    margin-bottom: 12px;
+    letter-spacing: -0.4px;
+  }
+  .footer-logo span { color: var(--accent); }
+  .footer-desc { font-size: 13px; color: rgba(255,255,255,0.38); line-height: 1.7; max-width: 260px; }
+
+  .footer-col h5 {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.28);
+    margin-bottom: 14px;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col li { margin-bottom: 9px; }
+  .footer-col a {
+    color: rgba(255,255,255,0.52);
+    text-decoration: none;
+    font-size: 13px;
+    transition: color 0.15s;
+  }
+  .footer-col a:hover { color: rgba(255,255,255,0.85); }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.07);
+    padding-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12.5px;
+    color: rgba(255,255,255,0.25);
+  }
+  .footer-bottom a { color: rgba(255,255,255,0.25); text-decoration: none; }
+  .footer-bottom a:hover { color: rgba(255,255,255,0.5); }
+
+  @media (max-width: 768px) {
+    .solutions-grid, .bento, .ind-grid, .platform-strip, .testi-grid, .faq-grid, .footer-top { grid-template-columns: 1fr; }
+    .bento-card.span2 { grid-column: span 1; }
+    .platform-strip { grid-template-columns: repeat(2, 1fr); }
+    .hero h1 { font-size: 32px; }
+    nav { padding: 0 20px; }
+    .nav-center { display: none; }
+    section { padding: 56px 20px; }
+    .faq-item:nth-child(even) { padding-left: 0; border-left: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">Franchisli<span>.</span></a>
+
+  <ul class="nav-center">
+    <li class="nav-item">
+      <span>
+        Platform
+        <svg class="nav-chevron" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <path d="M2 4l4 4 4-4"/>
+        </svg>
+      </span>
+      <div class="nav-dropdown">
+        <div class="nav-dropdown-label">Features</div>
+        <a class="nav-dropdown-item" href="#">Operations & Checklists</a>
+        <a class="nav-dropdown-item" href="#">Inspections & Audits</a>
+        <a class="nav-dropdown-item" href="#">Communication</a>
+        <a class="nav-dropdown-item" href="#">Documents & SOPs</a>
+        <a class="nav-dropdown-item" href="#">Reporting & Analytics</a>
+        <div class="nav-dropdown-divider"></div>
+        <div class="nav-dropdown-label">Coming in V1</div>
+        <a class="nav-dropdown-item soon" href="#">Learning Management <span class="soon-pill">Soon</span></a>
+        <a class="nav-dropdown-item soon" href="#">AI Insights <span class="soon-pill">Soon</span></a>
+      </div>
+    </li>
+    <li class="nav-item">
+      <span>
+        Solutions
+        <svg class="nav-chevron" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <path d="M2 4l4 4 4-4"/>
+        </svg>
+      </span>
+      <div class="nav-dropdown" style="min-width: 190px;">
+        <div class="nav-dropdown-label">By Industry</div>
+        <a class="nav-dropdown-item" href="#">Restaurants</a>
+        <a class="nav-dropdown-item" href="#">Hotels &amp; Resorts</a>
+        <a class="nav-dropdown-item soon" href="#">Fitness &amp; Leisure <span class="soon-pill">Soon</span></a>
+        <a class="nav-dropdown-item soon" href="#">Retail <span class="soon-pill">Soon</span></a>
+      </div>
+    </li>
+    <li class="nav-item"><a href="#">Pricing</a></li>
+    <li class="nav-item"><a href="#">Resources</a></li>
+  </ul>
+
+  <div class="nav-ctas">
+    <a href="#" class="btn-ghost">Login</a>
+    <a href="#" class="btn-primary">Book a Demo</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <span class="eyebrow-dot"></span>
+      Restaurant Franchise Management
+    </div>
+    <h1>Run every location like your <em>best one</em></h1>
+    <p class="hero-sub">One platform for multi-unit restaurant and hotel operators to manage daily operations, staff training, audits, and compliance — across every site.</p>
+    <div class="hero-ctas">
+      <a href="#" class="btn-hero-primary">Book a Demo</a>
+      <a href="#" class="btn-hero-outline">Get Pricing &rarr;</a>
+    </div>
+    <div class="hero-rating">
+      <span class="rating-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+      <span class="rating-bold">4.9</span>
+      across hundreds of reviews &nbsp;&middot;&nbsp; G2 &nbsp;&middot;&nbsp; Capterra &nbsp;&middot;&nbsp; GetApp
+    </div>
+    <div class="hero-logos">
+      <span class="hero-logos-label">Trusted by operators</span>
+      <span class="logo-chip">QSR Networks</span>
+      <span class="logo-chip">Hotel Groups</span>
+      <span class="logo-chip">Multi-unit Operators</span>
+      <span class="logo-chip">Regional Franchisors</span>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stats-bar-inner">
+    <div><div class="stat-num">10k+</div><div class="stat-label">Frontline workers managed daily</div></div>
+    <div><div class="stat-num">500+</div><div class="stat-label">Franchise locations onboarded</div></div>
+    <div><div class="stat-num">98%</div><div class="stat-label">Customer retention rate</div></div>
+    <div><div class="stat-num">3 hrs</div><div class="stat-label">Average time saved per location/week</div></div>
+  </div>
+</div>
+
+<!-- SOLUTIONS -->
+<section class="solutions-section">
+  <div class="section-inner">
+    <span class="eyebrow">Platform</span>
+    <h2 class="section-title">Everything your franchise network needs</h2>
+    <p class="section-sub">Built for franchisors managing 20&ndash;500 locations. One platform, no spreadsheets.</p>
+
+    <div class="solutions-grid">
+
+      <div class="sol-card">
+        <span class="sol-badge-live">Live</span>
+        <div class="sol-icon">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        </div>
+        <h3>Multi-Location Overview</h3>
+        <p>Real-time visibility across every site from a single HQ dashboard. Territory grouping, location profiles, and health scores.</p>
+      </div>
+
+      <div class="sol-card">
+        <span class="sol-badge-live">Live</span>
+        <div class="sol-icon">
+          <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        </div>
+        <h3>Operations &amp; Checklists</h3>
+        <p>Digital checklists, opening/closing procedures, shift handover notes, and task management — trackable at every location.</p>
+      </div>
+
+      <div class="sol-card">
+        <span class="sol-badge-live">Live</span>
+        <div class="sol-icon">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        </div>
+        <h3>Inspections &amp; Audits</h3>
+        <p>Scheduled and surprise audits with photo evidence, scoring, and automatic follow-up creation for failed items.</p>
+      </div>
+
+      <div class="sol-card">
+        <span class="sol-badge-live">Live</span>
+        <div class="sol-icon">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        </div>
+        <h3>Employee Communication</h3>
+        <p>Broadcast announcements from HQ to all locations or specific sites. Bulletin boards with read-receipt confirmation.</p>
+      </div>
+
+      <div class="sol-card">
+        <span class="sol-badge-live">Live</span>
+        <div class="sol-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </div>
+        <h3>Documents &amp; SOPs</h3>
+        <p>A searchable SOP library with version control and policy acknowledgment tracking. Old versions auto-archive on update.</p>
+      </div>
+
+      <div class="sol-card">
+        <span class="sol-badge-live">Live</span>
+        <div class="sol-icon">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </div>
+        <h3>Reporting &amp; Analytics</h3>
+        <p>Location rankings, training completion rates, and exportable PDF/CSV reports for leadership reviews.</p>
+      </div>
+
+      <div class="sol-card soon">
+        <span class="sol-badge-soon">V1 &mdash; Coming Soon</span>
+        <div class="sol-icon">
+          <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+        </div>
+        <h3>Learning Management</h3>
+        <p>Mobile-first course creation, role-based training assignments, completion tracking, and certification issuance.</p>
+      </div>
+
+      <div class="sol-card soon">
+        <span class="sol-badge-soon">V1 &mdash; Coming Soon</span>
+        <div class="sol-icon">
+          <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <h3>AI-Powered Insights</h3>
+        <p>Anomaly detection, AI corrective action suggestions, and auto-generated weekly performance summaries across your network.</p>
+      </div>
+
+      <div class="sol-card soon">
+        <span class="sol-badge-soon">V1 &mdash; Coming Soon</span>
+        <div class="sol-icon">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <h3>Staff Onboarding &amp; Rosters</h3>
+        <p>Digital onboarding workflows, staff roster management, and scheduling visibility across all locations.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES BENTO -->
+<section class="features-section">
+  <div class="section-inner">
+    <span class="eyebrow">Features</span>
+    <h2 class="section-title">Built around how franchise operations actually work</h2>
+    <p class="section-sub">Every feature addresses a real daily pain of running multiple locations from HQ.</p>
+
+    <div class="bento">
+
+      <div class="bento-card span2">
+        <span class="bento-tag">Operations</span>
+        <h3>Digital checklists &amp; task management</h3>
+        <p>Replace paper with digital, trackable procedures. Set recurring schedules for daily, weekly, and monthly tasks. Staff receive notifications when jobs are due &mdash; and managers see real-time completion status across every location from HQ.</p>
+        <span class="status-live">Available now</span>
+      </div>
+
+      <div class="bento-card">
+        <span class="bento-tag">Compliance</span>
+        <h3>Inspections with photo capture</h3>
+        <p>Run scheduled or surprise audits with photo evidence, automatic scoring, and failed-item follow-up assignment.</p>
+        <span class="status-live">Available now</span>
+      </div>
+
+      <div class="bento-card">
+        <span class="bento-tag">Reporting</span>
+        <h3>Location rankings &amp; exports</h3>
+        <p>See which locations are leading and which are falling behind. Export to PDF or CSV for leadership reviews.</p>
+        <span class="status-live">Available now</span>
+      </div>
+
+      <div class="bento-card">
+        <span class="bento-tag">Documents</span>
+        <h3>Searchable SOP library</h3>
+        <p>One home for every operating procedure. Old versions auto-archive when you publish an update.</p>
+        <span class="status-live">Available now</span>
+      </div>
+
+      <div class="bento-card dark span2">
+        <span class="bento-tag">AI &mdash; Coming in V1</span>
+        <h3>Anomaly detection &amp; corrective action suggestions</h3>
+        <p>Franchisli monitors every location's data and flags performance anomalies before they become problems &mdash; then suggests the corrective actions most likely to resolve them, based on patterns across your entire network.</p>
+        <span class="status-soon-light">Coming in V1</span>
+      </div>
+
+      <div class="bento-card">
+        <span class="bento-tag">Training</span>
+        <h3>Mobile-first LMS</h3>
+        <p>Assign training by role or location. Track completion in real-time. Issue certificates automatically on completion.</p>
+        <span class="status-soon">Coming in V1</span>
+      </div>
+
+      <div class="bento-card">
+        <span class="bento-tag">Mobile</span>
+        <h3>iOS &amp; Android apps</h3>
+        <p>Full-featured mobile apps for frontline staff. Checklists, audits, and communications on any device.</p>
+        <span class="status-live">Available now</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- INDUSTRY TABS -->
+<section class="industry-section">
+  <div class="section-inner">
+    <span class="eyebrow">By Industry</span>
+    <h2 class="section-title">Purpose-built for your franchise type</h2>
+    <p class="section-sub">Franchisli ships with industry-specific features out of the box &mdash; not generic software you have to reshape.</p>
+
+    <div class="ind-tabs">
+      <button class="ind-tab active" onclick="showInd('restaurants', this)">Restaurants</button>
+      <button class="ind-tab" onclick="showInd('hotels', this)">Hotels &amp; Resorts</button>
+      <button class="ind-tab disabled">Fitness &amp; Leisure <span class="soon-pill">V2</span></button>
+      <button class="ind-tab disabled">Retail <span class="soon-pill">V2</span></button>
+    </div>
+
+    <div id="restaurants" class="ind-content active">
+      <div class="ind-grid">
+        <div class="ind-feature">
+          <div class="ind-icon">
+            <svg viewBox="0 0 24 24"><path d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z"/><path d="M20.5 10H19V8.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/><path d="M9.5 14.5c0 .83-.67 1.5-1.5 1.5H3c-.83 0-1.5-.67-1.5-1.5S2.17 13 3 13h5c.83 0 1.5.67 1.5 1.5z"/><path d="M9.5 10c0 .83-.67 1.5-1.5 1.5H3C2.17 11.5 1.5 10.83 1.5 10S2.17 8.5 3 8.5h5c.83 0 1.5.67 1.5 1.5z"/></svg>
+          </div>
+          <div>
+            <h4>Food Safety Temperature Logs</h4>
+            <p>Digital temperature recording for all food safety checks. Timestamped, searchable, audit-ready.</p>
+          </div>
+        </div>
+        <div class="ind-feature">
+          <div class="ind-icon">
+            <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div>
+            <h4>Allergen Compliance Checklists</h4>
+            <p>Pre-built allergen compliance workflows ensuring your team follows brand and legal standards every shift.</p>
+          </div>
+        </div>
+        <div class="ind-feature">
+          <div class="ind-icon">
+            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div>
+            <h4>Health Inspection Prep Checklists</h4>
+            <p>Be ready for any health inspection with digital prep checklists mapped to local health codes.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="hotels" class="ind-content">
+      <div class="ind-grid">
+        <div class="ind-feature">
+          <div class="ind-icon">
+            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <div>
+            <h4>Room Inspection Workflows</h4>
+            <p>Digital room inspection checklists with photo evidence capture and brand standard scoring.</p>
+          </div>
+        </div>
+        <div class="ind-feature">
+          <div class="ind-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          </div>
+          <div>
+            <h4>Guest Complaint Tracking</h4>
+            <p>Log, assign, and resolve guest complaints with a full audit trail visible to both property and HQ.</p>
+          </div>
+        </div>
+        <div class="ind-feature">
+          <div class="ind-icon">
+            <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          </div>
+          <div>
+            <h4>Housekeeping Task Management <span class="soon-pill" style="font-size:10px;">V1</span></h4>
+            <p>Assign and track housekeeping tasks by floor, wing, or team with real-time completion tracking.</p>
+          </div>
+        </div>
+        <div class="ind-feature">
+          <div class="ind-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+          </div>
+          <div>
+            <h4>Brand Standard Room Audits <span class="soon-pill" style="font-size:10px;">V1</span></h4>
+            <p>Structured room audits scored against your brand standards &mdash; with photo evidence and auto-generated reports.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="fitness" class="ind-content">
+      <div style="text-align:center; padding: 60px 20px;">
+        <div style="width:48px;height:48px;border-radius:50%;background:var(--brand-light);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="1.8" stroke-linecap="round"><path d="M6.5 6.5h11M6.5 17.5h11M3 3l18 18"/></svg>
+        </div>
+        <h3 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:700;color:var(--text-primary);margin-bottom:8px;">Fitness &amp; Leisure &mdash; Coming in V2</h3>
+        <p style="font-size:14px;color:var(--text-muted);max-width:380px;margin:0 auto 24px;">Equipment safety logs, member incident reporting, and class/trainer compliance tracking.</p>
+        <a href="#" class="btn-primary">Join Waitlist</a>
+      </div>
+    </div>
+
+    <div id="retail" class="ind-content">
+      <div style="text-align:center; padding: 60px 20px;">
+        <div style="width:48px;height:48px;border-radius:50%;background:var(--brand-light);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="1.8" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        </div>
+        <h3 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:700;color:var(--text-primary);margin-bottom:8px;">Retail &mdash; Coming in V2</h3>
+        <p style="font-size:14px;color:var(--text-muted);max-width:380px;margin:0 auto 24px;">Planogram compliance audits, promotional rollout tracking, and shrinkage/loss reporting.</p>
+        <a href="#" class="btn-primary">Join Waitlist</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PLATFORM ESSENTIALS -->
+<section class="platform-section">
+  <div class="section-inner">
+    <span class="eyebrow">Platform Essentials</span>
+    <h2 class="section-title">The foundation everything runs on</h2>
+    <p class="section-sub">Core infrastructure built for every device, every role, every location in your network.</p>
+
+    <div class="platform-strip">
+      <div class="plat-item">
+        <div class="plat-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+        <h4>Reporting</h4>
+        <p>Role-based dashboards and deeper analytics for leadership</p>
+      </div>
+      <div class="plat-item">
+        <div class="plat-icon"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+        <h4>AI Tools</h4>
+        <p>Anomaly detection and trend analysis across your network</p>
+      </div>
+      <div class="plat-item">
+        <div class="plat-icon"><svg viewBox="0 0 24 24"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 012 2v7"/><line x1="6" y1="9" x2="6" y2="21"/></svg></div>
+        <h4>Integrations</h4>
+        <p>Connect POS, accounting, and payroll tools</p>
+      </div>
+      <div class="plat-item">
+        <div class="plat-icon"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+        <h4>Mobile Apps</h4>
+        <p>iOS and Android apps for your frontline workforce</p>
+      </div>
+      <div class="plat-item">
+        <div class="plat-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+        <h4>Security</h4>
+        <p>Role-based access control, SSO, and SOC 2 compliance</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section">
+  <div class="section-inner">
+    <span class="eyebrow">Success Stories</span>
+    <h2 class="section-title">Franchise operators trust Franchisli</h2>
+    <p class="section-sub">How multi-unit operators use Franchisli to drive consistency at scale.</p>
+
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="testi-text">"Franchisli replaced five different tools we were using. Now our HQ team has complete visibility across all 45 locations without making a single phone call."</p>
+        <div class="testi-author">
+          <div class="author-avatar">MR</div>
+          <div>
+            <div class="author-name">Marcus Rodriguez</div>
+            <div class="author-role">VP Operations, QSR Franchise Group</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="testi-text">"The audit module alone saved us from two health inspection failures last quarter. The photo evidence and corrective action tracking is exactly what we needed."</p>
+        <div class="testi-author">
+          <div class="author-avatar">SL</div>
+          <div>
+            <div class="author-name">Sarah Lin</div>
+            <div class="author-role">Director of Compliance, Hotel Franchise</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="testi-text">"Onboarding new locations used to take 3 weeks. With Franchisli's SOP library and location workflows, we're down to 6 days. That's real money saved."</p>
+        <div class="testi-author">
+          <div class="author-avatar">JT</div>
+          <div>
+            <div class="author-name">James Thompson</div>
+            <div class="author-role">Franchisor, 78-Location Network</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Ready to raise the standard across every location?</h2>
+  <p>Book a 30-minute demo and see exactly how Franchisli fits your network.</p>
+  <div class="cta-btns">
+    <a href="#" class="btn-hero-primary">Book a Free Demo</a>
+    <a href="#" class="btn-hero-outline">Get Pricing &rarr;</a>
+  </div>
+  <div class="cta-footnote">No commitment &nbsp;&middot;&nbsp; 14-day free trial &nbsp;&middot;&nbsp; Setup in days, not months</div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="section-inner">
+    <span class="eyebrow">FAQ</span>
+    <h2 class="section-title">Common questions</h2>
+    <p class="section-sub" style="margin-bottom: 36px;">Everything you need to know before booking a demo.</p>
+    <div class="faq-grid">
+      <div class="faq-item">
+        <h4>Is Franchisli right for my franchise size?</h4>
+        <p>Franchisli is built for franchisors managing 20&ndash;500 locations. Whether you run a regional QSR network or a national hotel brand, the platform scales with you.</p>
+      </div>
+      <div class="faq-item">
+        <h4>How does pricing work?</h4>
+        <p>Pricing is based on the number of locations and features you need. No per-user charges &mdash; one flat rate per location tier. Custom quote available instantly after your demo.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Is there a free trial?</h4>
+        <p>Yes. After your demo, you get 14 days of free access across up to 5 locations with all MVP features. No credit card required.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Do you have mobile apps?</h4>
+        <p>Yes. iOS and Android apps are available for frontline staff. HQ and managers primarily use the web app, while staff handle daily tasks on mobile.</p>
+      </div>
+      <div class="faq-item">
+        <h4>What is on the V1 roadmap?</h4>
+        <p>V1 brings the full LMS, AI anomaly detection, corrective actions automation, real-time KPI dashboards, location benchmarking, and calendar integrations.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Can I migrate from FranConnect or Naranga?</h4>
+        <p>Yes. We provide a white-glove migration service for SOPs, location data, and employee records. Most franchisors are fully migrated within two weeks.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo">Franchisli<span>.</span></div>
+        <p class="footer-desc">All-in-one franchise operations platform for multi-unit restaurant and hotel operators. Built for franchisors who want consistency at scale.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Platform</h5>
+        <ul>
+          <li><a href="#">Operations &amp; Checklists</a></li>
+          <li><a href="#">Inspections &amp; Audits</a></li>
+          <li><a href="#">Communication</a></li>
+          <li><a href="#">Documents &amp; SOPs</a></li>
+          <li><a href="#">Reporting</a></li>
+          <li><a href="#">Mobile Apps</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Industries</h5>
+        <ul>
+          <li><a href="#">Restaurants</a></li>
+          <li><a href="#">Hotels &amp; Resorts</a></li>
+          <li><a href="#">Fitness (Coming Soon)</a></li>
+          <li><a href="#">Retail (Coming Soon)</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#">Pricing</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Contact Sales</a></li>
+          <li><a href="#">Help Center</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Franchisli. All rights reserved.</span>
+      <div style="display:flex;gap:20px;">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function showInd(id, btn) {
+    document.querySelectorAll('.ind-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.ind-tab:not(.disabled)').forEach(el => el.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+
+</body>
+</html>

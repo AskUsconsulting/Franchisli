@@ -1,0 +1,31 @@
+{
+  "name": "@franchisli/expo",
+  "version": "0.0.1",
+  "private": true,
+  "main": "expo-router/entry",
+  "scripts": {
+    "dev": "expo start",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web",
+    "lint": "eslint app/",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@franchisli/ui": "*",
+    "@supabase/supabase-js": "^2.44.0",
+    "expo": "~51.0.0",
+    "expo-router": "~3.5.0",
+    "expo-status-bar": "~1.12.1",
+    "react": "18.2.0",
+    "react-native": "0.74.1",
+    "react-native-safe-area-context": "4.10.1",
+    "react-native-screens": "3.31.1"
+  },
+  "devDependencies": {
+    "@franchisli/config-typescript": "*",
+    "@babel/core": "^7.24.0",
+    "@types/react": "~18.2.79",
+    "typescript": "^5.4.5"
+  }
+}

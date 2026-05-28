@@ -29,7 +29,7 @@ const NAV_ITEMS = [
   { label: "Franchisees",  href: "/dashboard/franchisees",icon: Users },
   { label: "Audits",       href: "/dashboard/audits",     icon: ClipboardCheck },
   { label: "Documents",    href: "/dashboard/documents",  icon: FileText },
-  { label: "Messages",     href: "/dashboard/messages",   icon: MessageSquare },
+  { label: "Communications", href: "/dashboard/communications", icon: MessageSquare },
   { label: "Tasks",        href: "/dashboard/tasks",      icon: CheckSquare },
   { label: "Reports",      href: "/dashboard/reports",    icon: BarChart2 },
   { label: "Settings",     href: "/dashboard/settings",   icon: Settings },
@@ -65,7 +65,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Navigation */}
         <nav className="flex-1 py-4 overflow-y-auto">
           {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
-            const active = pathname === href;
+            const active = href === "/dashboard" ? pathname === href : pathname.startsWith(href);
             return (
               <Link
                 key={href}

@@ -18,11 +18,13 @@ import {
   LogOut,
   Menu,
   X,
+  Workflow,
 } from "lucide-react";
 import { useState } from "react";
 
 const NAV_ITEMS = [
   { label: "Dashboard",    href: "/dashboard",            icon: LayoutDashboard },
+  { label: "Operations",   href: "/dashboard/operations", icon: Workflow },
   { label: "Locations",    href: "/dashboard/locations",  icon: MapPin },
   { label: "Franchisees",  href: "/dashboard/franchisees",icon: Users },
   { label: "Audits",       href: "/dashboard/audits",     icon: ClipboardCheck },

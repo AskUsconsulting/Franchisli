@@ -4,23 +4,22 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, MapPin, Users, ClipboardCheck, FileText,
-  MessageSquare, CheckSquare, BarChart2, Settings, Bell,
+  CheckSquare, BarChart2, Settings, Bell,
   Search, ChevronDown, LogOut, Menu, X, Workflow,
 } from "lucide-react";
 import { useState } from "react";
 import { signOut } from "@/app/actions/auth";
 
 const NAV_ITEMS = [
-  { label: "Dashboard",      href: "/dashboard",                    icon: LayoutDashboard },
-  { label: "Operations",     href: "/dashboard/operations",         icon: Workflow },
-  { label: "Locations",      href: "/dashboard/locations",          icon: MapPin },
-  { label: "Franchisees",    href: "/dashboard/franchisees",        icon: Users },
-  { label: "Audits",         href: "/dashboard/audits",             icon: ClipboardCheck },
-  { label: "Documents",      href: "/dashboard/documents",          icon: FileText },
-  { label: "Communications", href: "/dashboard/communications",     icon: MessageSquare },
-  { label: "Tasks",          href: "/dashboard/tasks",              icon: CheckSquare },
-  { label: "Reports",        href: "/dashboard/reports",            icon: BarChart2 },
-  { label: "Settings",       href: "/dashboard/settings",           icon: Settings },
+  { label: "Dashboard",    href: "/dashboard",             icon: LayoutDashboard },
+  { label: "Operations",   href: "/dashboard/operations",  icon: Workflow },
+  { label: "Locations",    href: "/dashboard/locations",   icon: MapPin },
+  { label: "Franchisees",  href: "/dashboard/franchisees", icon: Users },
+  { label: "Audits",       href: "/dashboard/audits",      icon: ClipboardCheck },
+  { label: "Documents",    href: "/dashboard/documents",   icon: FileText },
+  { label: "Tasks",        href: "/dashboard/tasks",       icon: CheckSquare },
+  { label: "Reports",      href: "/dashboard/reports",     icon: BarChart2 },
+  { label: "Settings",     href: "/dashboard/settings",    icon: Settings },
 ];
 
 interface Props {

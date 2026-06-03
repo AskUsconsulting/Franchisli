@@ -1,8 +1,11 @@
+"use client";
+
+import { useState } from "react";
 import {
   Users, MapPin, TrendingUp, TrendingDown, Star, AlertTriangle,
-  CheckCircle2, Clock, MoreHorizontal, Plus, ArrowRight, Phone, Mail,
+  MoreHorizontal, Plus, Phone, Mail, CheckCircle2,
 } from "lucide-react";
-import Link from "next/link";
+import Modal from "@/components/Modal";
 
 const FRANCHISEES = [
   {
@@ -115,21 +118,82 @@ const STATUS_LABELS: Record<string, string> = {
   onboarding: "Onboarding",
 };
 
+const AVATAR_COLORS = ["bg-blue-500","bg-purple-500","bg-green-500","bg-orange-500","bg-indigo-500","bg-pink-500","bg-teal-500","bg-red-500"];
+
 export default function FranchiseesPage() {
-  const totalLocations  = FRANCHISEES.reduce((s, f) => s + f.locationCount, 0);
-  const avgCompliance   = Math.round(FRANCHISEES.reduce((s, f) => s + f.complianceScore, 0) / FRANCHISEES.length);
-  const needsAttention  = FRANCHISEES.filter((f) => f.status === "attention").length;
-  const totalOpenTasks  = FRANCHISEES.reduce((s, f) => s + f.openTasks, 0);
+  const [list, setList] = useState(FRANCHISEES);
+  const [open, setOpen] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [form, setForm] = useState({ name: "", email: "", phone: "", locations: "", joinDate: "" });
+
+  function set(k: string, v: string) { setForm((p) => ({ ...p, [k]: v })); }
+
+  function handleAdd(e: React.FormEvent) {
+    e.preventDefault();
+    const initials = form.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
+    const locs = form.locations.split(",").map((l) => l.trim()).filter(Boolean);
+    setList((prev) => [...prev, {
+      id: `f${Date.now()}`,
+      name: form.name,
+      email: form.email,
+      phone: form.phone,
+      locations: locs,
+      locationCount: locs.length || 1,
+      joinDate: form.joinDate || new Date().toLocaleDateString("en-US", { month: "short", year: "numeric" }),
+      complianceScore: 100,
+      trend: "up" as const,
+      status: "onboarding",
+      lastAudit: "Never",
+      openTasks: 0,
+      avatar: initials,
+      color: AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)],
+    }]);
+    setForm({ name: "", email: "", phone: "", locations: "", joinDate: "" });
+    setSaved(true);
+    setTimeout(() => { setSaved(false); setOpen(false); }, 1500);
+  }
+
+  const totalLocations  = list.reduce((s, f) => s + f.locationCount, 0);
+  const avgCompliance   = Math.round(list.reduce((s, f) => s + f.complianceScore, 0) / list.length);
+  const needsAttention  = list.filter((f) => f.status === "attention").length;
 
   return (
     <div className="space-y-6">
+      {/* Add Franchisee Modal */}
+      <Modal open={open} onClose={() => setOpen(false)} title="Add Franchisee">
+        <form onSubmit={handleAdd} className="space-y-4">
+          {[
+            { label: "Full Name",   key: "name",      type: "text",  placeholder: "Jane Smith",                required: true },
+            { label: "Email",       key: "email",     type: "email", placeholder: "jane@franchise.com",        required: true },
+            { label: "Phone",       key: "phone",     type: "tel",   placeholder: "+1 (404) 555-0100",         required: false },
+            { label: "Locations (comma-separated)", key: "locations", type: "text", placeholder: "Downtown, Midtown", required: false },
+            { label: "Join Date",   key: "joinDate",  type: "text",  placeholder: "Jun 2026",                  required: false },
+          ].map(({ label, key, type, placeholder, required }) => (
+            <div key={key}>
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
+                {label} {required && <span className="text-red-500">*</span>}
+              </label>
+              <input
+                type={type} required={required} placeholder={placeholder}
+                value={form[key as keyof typeof form]}
+                onChange={(e) => set(key, e.target.value)}
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
+              />
+            </div>
+          ))}
+          <button type="submit" className={`w-full font-bold text-sm py-3 rounded-xl transition-all flex items-center justify-center gap-2 mt-2 ${saved ? "bg-green-600 text-white" : "bg-brand-600 text-white hover:bg-brand-700"}`}>
+            {saved ? <><CheckCircle2 size={15} /> Added!</> : "Add Franchisee"}
+          </button>
+        </form>
+      </Modal>
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Franchisees</h1>
           <p className="text-sm text-gray-500 mt-1">Manage your franchise network and operator relationships</p>
         </div>
-        <button className="flex items-center gap-2 bg-brand-600 text-white text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-brand-700 transition-colors shadow-sm">
+        <button onClick={() => setOpen(true)} className="flex items-center gap-2 bg-brand-600 text-white text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-brand-700 transition-colors shadow-sm">
           <Plus size={16} /> Add Franchisee
         </button>
       </div>
@@ -163,7 +227,7 @@ export default function FranchiseesPage() {
 
       {/* Franchisee cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {FRANCHISEES.map((f) => (
+        {list.map((f) => (
           <div key={f.id} className="bg-white border border-gray-200 rounded-xl p-5 hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">

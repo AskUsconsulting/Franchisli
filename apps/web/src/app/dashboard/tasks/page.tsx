@@ -3,8 +3,9 @@
 import { useState } from "react";
 import {
   CheckSquare, Square, Plus, Clock, AlertTriangle, CheckCircle2,
-  Filter, Search, MoreHorizontal, Calendar, MapPin, User, Flag,
+  Search, MoreHorizontal, Calendar, MapPin, User, Flag,
 } from "lucide-react";
+import Modal from "@/components/Modal";
 
 const TASKS = [
   { id: "t1",  title: "Update food safety certification — Decatur",           due: "2026-06-05", priority: "high",   status: "open",        assignee: "Derek Johnson",  location: "Decatur",        category: "Compliance" },
@@ -48,11 +49,27 @@ function isOverdue(due: string, status: string) {
   return status !== "completed" && new Date(due) < new Date();
 }
 
+const BLANK_TASK = { title: "", assignee: "", location: "", due: "", priority: "medium", category: "Operations" };
+
 export default function TasksPage() {
+  const [taskList,   setTaskList]   = useState(TASKS);
   const [filter,     setFilter]     = useState("All");
   const [category,   setCategory]   = useState("All Categories");
   const [search,     setSearch]     = useState("");
   const [completed,  setCompleted]  = useState<Set<string>>(new Set(["t7"]));
+  const [modalOpen,  setModalOpen]  = useState(false);
+  const [saved,      setSaved]      = useState(false);
+  const [newTask,    setNewTask]    = useState({ ...BLANK_TASK });
+
+  function setField(k: string, v: string) { setNewTask((p) => ({ ...p, [k]: v })); }
+
+  function handleAddTask(e: React.FormEvent) {
+    e.preventDefault();
+    const id = `t${Date.now()}`;
+    setTaskList((prev) => [...prev, { id, ...newTask, status: "open" }]);
+    setSaved(true);
+    setTimeout(() => { setSaved(false); setModalOpen(false); setNewTask({ ...BLANK_TASK }); }, 1200);
+  }
 
   function toggle(id: string) {
     setCompleted((prev) => {
@@ -62,7 +79,7 @@ export default function TasksPage() {
     });
   }
 
-  const tasks = TASKS.map((t) => ({
+  const tasks = taskList.map((t) => ({
     ...t,
     status: completed.has(t.id) ? "completed" : isOverdue(t.due, t.status) ? "overdue" : t.status,
   }));
@@ -74,20 +91,67 @@ export default function TasksPage() {
     return matchFilter && matchCategory && matchSearch;
   });
 
-  const open        = tasks.filter((t) => t.status === "open").length;
+  const open        = tasks.filter((t) => t.status === "open" || t.status === "overdue").length;
   const inProgress  = tasks.filter((t) => t.status === "in_progress").length;
   const overdue     = tasks.filter((t) => t.status === "overdue").length;
   const done        = tasks.filter((t) => t.status === "completed").length;
 
   return (
     <div className="space-y-6">
+      {/* New Task Modal */}
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="New Task">
+        <form onSubmit={handleAddTask} className="space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Task Title <span className="text-red-500">*</span></label>
+            <input required type="text" placeholder="e.g. Update food safety certification" value={newTask.title} onChange={(e) => setField("title", e.target.value)}
+              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Assignee</label>
+              <input type="text" placeholder="Marcus Williams" value={newTask.assignee} onChange={(e) => setField("assignee", e.target.value)}
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Location</label>
+              <input type="text" placeholder="Downtown Atlanta" value={newTask.location} onChange={(e) => setField("location", e.target.value)}
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Due Date <span className="text-red-500">*</span></label>
+              <input required type="date" value={newTask.due} onChange={(e) => setField("due", e.target.value)}
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Priority</label>
+              <select value={newTask.priority} onChange={(e) => setField("priority", e.target.value)}
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-brand-500 bg-white">
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Category</label>
+            <select value={newTask.category} onChange={(e) => setField("category", e.target.value)}
+              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-brand-500 bg-white">
+              {["Compliance","Audit","Operations","Training","Reporting","Maintenance","Legal"].map((c) => <option key={c}>{c}</option>)}
+            </select>
+          </div>
+          <button type="submit" className={`w-full font-bold text-sm py-3 rounded-xl transition-all flex items-center justify-center gap-2 mt-2 ${saved ? "bg-green-600 text-white" : "bg-brand-600 text-white hover:bg-brand-700"}`}>
+            {saved ? <><CheckCircle2 size={15} /> Task Added!</> : "Create Task"}
+          </button>
+        </form>
+      </Modal>
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Tasks</h1>
           <p className="text-sm text-gray-500 mt-1">Track and manage action items across your franchise network</p>
         </div>
-        <button className="flex items-center gap-2 bg-brand-600 text-white text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-brand-700 transition-colors shadow-sm">
+        <button onClick={() => setModalOpen(true)} className="flex items-center gap-2 bg-brand-600 text-white text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-brand-700 transition-colors shadow-sm">
           <Plus size={16} /> New Task
         </button>
       </div>

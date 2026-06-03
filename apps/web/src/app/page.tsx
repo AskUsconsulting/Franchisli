@@ -1,8 +1,10 @@
-export default function Home() {
-  return (
-    <main style={{ padding: "2rem" }}>
-      <h1>Franchisli</h1>
-      <p>Welcome to the Franchisli platform. Start building.</p>
-    </main>
-  );
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+
+export default async function Home() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (user) redirect("/dashboard");
+  redirect("/login");
 }

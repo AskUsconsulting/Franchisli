@@ -3,11 +3,34 @@ import { signUpOwner, signInWithGoogle } from "@/app/actions/auth";
 import { KeyRound } from "lucide-react";
 
 interface Props {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; success?: string }>;
 }
 
 export default async function OwnerSignupPage({ searchParams }: Props) {
-  const { error } = await searchParams;
+  const { error, success } = await searchParams;
+
+  if (success) {
+    return (
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <Link href="/" className="inline-flex items-center gap-2.5">
+            <span className="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center text-white text-lg font-black">F</span>
+            <span className="font-black text-2xl tracking-tight text-brand-600">Franchisli</span>
+          </Link>
+        </div>
+        <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/60 border border-gray-100 p-8 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-green-100 flex items-center justify-center mx-auto mb-5">
+            <span className="text-3xl">📧</span>
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 mb-3">Check your email!</h2>
+          <p className="text-gray-500 text-sm leading-relaxed">
+            We sent a confirmation link to your email. Click it to activate your account and you&apos;ll be taken straight to your dashboard.
+          </p>
+          <p className="text-xs text-gray-400 mt-4">Don&apos;t see it? Check your spam folder.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-md">

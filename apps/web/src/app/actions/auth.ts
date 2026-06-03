@@ -60,11 +60,15 @@ export async function signUpOwner(formData: FormData) {
   }
 
   // 2. Create auth user
+  const headerList = await headers();
+  const origin = headerList.get("origin") ?? "http://localhost:3000";
+
   const { data: authData, error: signUpErr } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: { full_name: fullName, role: "owner" },
+      emailRedirectTo: `${origin}/auth/callback`,
     },
   });
 
@@ -85,7 +89,7 @@ export async function signUpOwner(formData: FormData) {
     .update({ used: true, used_by: authData.user.id, used_at: new Date().toISOString() })
     .eq("id", code.id);
 
-  redirect("/dashboard");
+  redirect("/signup/owner?success=1");
 }
 
 /* ── Invite Employee (called from dashboard settings) ──────────────────── */

@@ -13,7 +13,6 @@ import {
   Star,
   Clock,
   FileText,
-  MessageSquare,
 } from "lucide-react";
 
 // ─── Mock Data ───────────────────────────────────────────────────────────────
@@ -109,13 +108,6 @@ const TASKS = [
   { text: "Onboard Smyrna franchisee",         priority: "Medium", due: "Jun 7",  assignee: "Marki", done: false },
   { text: "Update operations manual v2.4",     priority: "Medium", due: "Jun 10", assignee: "Third", done: false },
   { text: "Approve Buckhead renovation plan",  priority: "Low",    due: "Jun 12", assignee: "You",   done: true  },
-];
-
-const MESSAGES = [
-  { from: "Marcus J.",  avatar: "MJ", msg: "Inventory delivery delayed — wanted to flag it",      time: "10m ago",  unread: true },
-  { from: "Marki",      avatar: "MK", msg: "Audit form for Buckhead is complete, review when able", time: "1h ago",  unread: true },
-  { from: "Sandra K.",  avatar: "SK", msg: "Q2 numbers look strong, up 12% 🎉",                   time: "3h ago",   unread: false },
-  { from: "Third",      avatar: "TH", msg: "Decatur needs follow-up before next audit",            time: "Yesterday",unread: false },
 ];
 
 const ACTIVITY = [
@@ -359,45 +351,13 @@ export default function OwnerDashboard() {
         </div>
       </div>
 
-      {/* Messages + Activity */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-
-        {/* Messages */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-gray-900">Messages</h2>
-            <button className="flex items-center gap-1 text-xs bg-brand-500 hover:bg-brand-600 text-white px-3 py-1.5 rounded-lg">
-              <MessageSquare size={12} /> New Message
-            </button>
-          </div>
-          <div className="space-y-1">
-            {MESSAGES.map(({ from, avatar, msg, time, unread }) => (
-              <div key={from} className={`flex items-start gap-3 p-3 rounded-lg cursor-pointer hover:bg-gray-50 ${unread ? "bg-brand-50" : ""}`}>
-                <div className="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-                  {avatar}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <p className={`text-sm ${unread ? "font-semibold text-gray-900" : "font-medium text-gray-700"}`}>{from}</p>
-                    <span className="text-xs text-gray-400 flex-shrink-0 ml-2">{time}</span>
-                  </div>
-                  <p className="text-xs text-gray-500 truncate mt-0.5">{msg}</p>
-                </div>
-                {unread && <span className="w-2 h-2 bg-brand-500 rounded-full flex-shrink-0 mt-1.5" />}
-              </div>
-            ))}
-          </div>
-          <button className="mt-3 w-full text-center text-xs text-brand-500 hover:text-brand-600 py-2 border-t border-gray-100 flex items-center justify-center gap-1">
-            Open inbox <ArrowRight size={12} />
-          </button>
+      {/* Activity Feed */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-semibold text-gray-900">Recent Activity</h2>
+          <button className="text-xs text-gray-400 hover:text-gray-600">View all</button>
         </div>
-
-        {/* Activity Feed */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-gray-900">Recent Activity</h2>
-            <button className="text-xs text-gray-400 hover:text-gray-600">View all</button>
-          </div>
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           <div className="space-y-4">
             {ACTIVITY.map(({ icon: Icon, color, text, time }, i) => (
               <div key={i} className="flex items-start gap-3">
@@ -411,15 +371,13 @@ export default function OwnerDashboard() {
               </div>
             ))}
           </div>
-
-          {/* Franchisee rating preview */}
-          <div className="mt-4 pt-4 border-t border-gray-100">
-            <p className="text-xs font-medium text-gray-500 mb-2 uppercase tracking-wide">Top Performers</p>
+          <div className="pt-0 xl:pt-0 xl:border-l xl:border-gray-100 xl:pl-6">
+            <p className="text-xs font-medium text-gray-500 mb-3 uppercase tracking-wide">Top Performers</p>
             <div className="space-y-2">
               {[
                 { name: "Marcus J. — Downtown Atlanta", score: 97 },
-                { name: "James P. — Marietta", score: 95 },
-                { name: "Sandra K. — Buckhead", score: 91 },
+                { name: "James P. — Marietta",          score: 95 },
+                { name: "Sandra K. — Buckhead",         score: 91 },
               ].map(({ name, score }) => (
                 <div key={name} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -443,7 +401,6 @@ export default function OwnerDashboard() {
             { label: "Invite Franchisee",       icon: Users,          color: "border-purple-200 text-purple-600 hover:bg-purple-50" },
             { label: "Schedule Audit",          icon: ClipboardCheck, color: "border-yellow-200 text-yellow-700 hover:bg-yellow-50" },
             { label: "Upload Document",         icon: FileText,       color: "border-gray-200 text-gray-600 hover:bg-gray-50" },
-            { label: "Send Announcement",       icon: MessageSquare,  color: "border-green-200 text-green-600 hover:bg-green-50" },
             { label: "Generate Royalty Report", icon: DollarSign,     color: "border-emerald-200 text-emerald-600 hover:bg-emerald-50" },
           ].map(({ label, icon: Icon, color }) => (
             <button

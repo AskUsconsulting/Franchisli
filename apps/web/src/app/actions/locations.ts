@@ -5,11 +5,19 @@ import { revalidatePath } from "next/cache";
 
 export async function addLocation(formData: FormData) {
   const admin = createAdminClient();
-  const name    = formData.get("name") as string;
-  const address = formData.get("address") as string;
-  const status  = (formData.get("status") as string) || "active";
+  const name         = formData.get("name") as string;
+  const address      = formData.get("address") as string;
+  const manager_name = formData.get("manager_name") as string;
+  const phone        = formData.get("phone") as string;
+  const status       = (formData.get("status") as string) || "active";
 
-  const { error } = await admin.from("locations").insert({ name, address, status });
+  const { error } = await admin.from("locations").insert({
+    name,
+    address:      address || null,
+    manager_name: manager_name || null,
+    phone:        phone || null,
+    status,
+  });
   if (error) return { error: error.message };
   revalidatePath("/dashboard/locations");
   return { success: true };
@@ -18,6 +26,14 @@ export async function addLocation(formData: FormData) {
 export async function updateLocationStatus(id: string, status: string) {
   const admin = createAdminClient();
   const { error } = await admin.from("locations").update({ status }).eq("id", id);
+  if (error) return { error: error.message };
+  revalidatePath("/dashboard/locations");
+  return { success: true };
+}
+
+export async function deleteLocation(id: string) {
+  const admin = createAdminClient();
+  const { error } = await admin.from("locations").delete().eq("id", id);
   if (error) return { error: error.message };
   revalidatePath("/dashboard/locations");
   return { success: true };

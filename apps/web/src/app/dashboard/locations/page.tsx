@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getLocationProfiles } from "@/lib/locations/queries";
 import { MapPin, Phone, User, ArrowRight, CheckCircle2, AlertCircle, Clock } from "lucide-react";
 import type { LocationWithRegion } from "@/types/locations";
+import AddLocationModal from "./_components/AddLocationModal";
 
 // ── Demo data ──────────────────────────────────────────────────────────────────
 
@@ -42,14 +43,32 @@ function yearsOpen(dateStr: string | null) {
 
 export default async function LocationsPage() {
   let locations: LocationWithRegion[] = [];
-  try { locations = await getLocationProfiles(); } catch { locations = DEMO_LOCATIONS; }
-  if (locations.length === 0) locations = DEMO_LOCATIONS;
+  let usingDemo = false;
+  try { locations = await getLocationProfiles(); } catch { locations = DEMO_LOCATIONS; usingDemo = true; }
+  if (locations.length === 0) { locations = DEMO_LOCATIONS; usingDemo = true; }
 
-  const active = locations.filter((l) => l.status === "active").length;
+  const active  = locations.filter((l) => l.status === "active").length;
   const regions = new Set(locations.map((l) => l.region_id)).size;
 
   return (
     <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Locations</h1>
+          <p className="text-sm text-gray-500 mt-1">
+            {usingDemo ? "Showing sample data — add your first real location below" : `${locations.length} location${locations.length !== 1 ? "s" : ""} in your network`}
+          </p>
+        </div>
+        <AddLocationModal />
+      </div>
+
+      {usingDemo && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">
+          📋 <strong>Sample data</strong> — Click <strong>Add Location</strong> to start adding your real locations.
+        </div>
+      )}
+
       {/* Summary */}
       <div className="grid grid-cols-3 gap-4">
         <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-3">

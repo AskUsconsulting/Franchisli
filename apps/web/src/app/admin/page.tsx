@@ -1,25 +1,8 @@
 export const dynamic = "force-dynamic";
 
 import { createAdminClient } from "@/lib/supabase/admin";
-import { revalidatePath } from "next/cache";
 import { Key, Users, CheckCircle2, Clock } from "lucide-react";
-
-async function generateCode(formData: FormData) {
-  "use server";
-  const admin = createAdminClient();
-  const label = formData.get("label") as string;
-  const code  = "FRNCH-" + Math.random().toString(36).substring(2, 8).toUpperCase();
-  await admin.from("access_codes").insert({ code, label });
-  revalidatePath("/admin");
-}
-
-async function deleteCode(formData: FormData) {
-  "use server";
-  const admin = createAdminClient();
-  const id = formData.get("id") as string;
-  await admin.from("access_codes").delete().eq("id", id);
-  revalidatePath("/admin");
-}
+import { generateCode, deleteCode } from "./actions";
 
 export default async function AdminPage() {
   const admin = createAdminClient();
@@ -36,23 +19,19 @@ export default async function AdminPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-4xl mx-auto space-y-8">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Franchisli Admin</h1>
             <p className="text-sm text-gray-500 mt-1">Manage access codes and customers</p>
           </div>
-          <a href="/dashboard" className="text-sm text-brand-600 font-semibold hover:text-brand-700">
-            ← Dashboard
-          </a>
+          <a href="/dashboard" className="text-sm text-brand-600 font-semibold hover:text-brand-700">← Dashboard</a>
         </div>
 
-        {/* Stats */}
         <div className="grid grid-cols-3 gap-4">
           {[
-            { label: "Total Users",    value: users?.users?.length ?? 0, icon: Users,        color: "bg-blue-50 text-blue-600" },
-            { label: "Unused Codes",   value: unused,                    icon: Key,           color: "bg-green-50 text-green-600" },
-            { label: "Used Codes",     value: used,                      icon: CheckCircle2,  color: "bg-gray-50 text-gray-600" },
+            { label: "Total Users",   value: users?.users?.length ?? 0, icon: Users,       color: "bg-blue-50 text-blue-600" },
+            { label: "Unused Codes",  value: unused,                    icon: Key,          color: "bg-green-50 text-green-600" },
+            { label: "Used Codes",    value: used,                      icon: CheckCircle2, color: "bg-gray-50 text-gray-600" },
           ].map(({ label, value, icon: Icon, color }) => (
             <div key={label} className="bg-white border border-gray-200 rounded-xl p-5">
               <div className={`w-9 h-9 rounded-lg flex items-center justify-center mb-3 ${color}`}><Icon size={18} /></div>
@@ -62,22 +41,18 @@ export default async function AdminPage() {
           ))}
         </div>
 
-        {/* Generate code */}
         <div className="bg-white border border-gray-200 rounded-xl p-6">
           <h2 className="font-semibold text-gray-900 mb-4">Generate Access Code</h2>
           <form action={generateCode} className="flex gap-3">
-            <input
-              name="label" type="text" required
+            <input name="label" type="text" required
               placeholder="Label e.g. Jane Smith — Golden Corral demo Jun 5"
-              className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10"
-            />
+              className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10" />
             <button type="submit" className="bg-brand-600 text-white font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-brand-700 transition-colors whitespace-nowrap">
               Generate Code
             </button>
           </form>
         </div>
 
-        {/* Codes table */}
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100">
             <h2 className="font-semibold text-gray-900">Access Codes</h2>
@@ -120,7 +95,6 @@ export default async function AdminPage() {
           </table>
         </div>
 
-        {/* Users */}
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100">
             <h2 className="font-semibold text-gray-900">Users</h2>

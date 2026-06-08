@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { Building2, MapPin, CheckCircle2, ArrowRight, Loader2 } from "lucide-react";
+import { completeOnboarding } from "@/app/actions/onboarding";
 
 const STEPS = ["Welcome", "Your Franchise", "First Location", "Done"];
 const LOCATION_COUNTS = ["1", "2–5", "6–10", "11–25", "26+"];
@@ -24,29 +24,14 @@ export default function OnboardingPage() {
     setLoading(true);
     setError("");
     try {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { router.push("/login"); return; }
+      const result = await completeOnboarding({
+        full_name:        profile.full_name,
+        business_name:    profile.business_name,
+        location_name:    location.name || undefined,
+        location_address: [location.address, location.city, location.state].filter(Boolean).join(", ") || undefined,
+      });
 
-      // Update profile
-      const { error: profErr } = await supabase
-        .from("profiles")
-        .upsert({
-          id:            user.id,
-          role:          "owner",
-          full_name:     profile.full_name,
-          business_name: profile.business_name,
-        });
-      if (profErr) throw profErr;
-
-      // Create first location if provided
-      if (location.name) {
-        await supabase.from("locations").insert({
-          name:    location.name,
-          address: [location.address, location.city, location.state].filter(Boolean).join(", "),
-          status:  "active",
-        });
-      }
+      if (result.error) throw new Error(result.error);
 
       setStep(3);
       setTimeout(() => router.push("/dashboard"), 1800);

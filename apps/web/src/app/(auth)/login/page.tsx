@@ -1,16 +1,16 @@
 import Link from "next/link";
-import { signIn, signInWithGoogle } from "@/app/actions/auth";
+import { signIn, signInWithGoogle, resendConfirmation } from "@/app/actions/auth";
+import { CheckCircle2 } from "lucide-react";
 
 interface Props {
-  searchParams: Promise<{ error?: string; next?: string }>;
+  searchParams: Promise<{ error?: string; next?: string; unconfirmed?: string; resent?: string }>;
 }
 
 export default async function LoginPage({ searchParams }: Props) {
-  const { error } = await searchParams;
+  const { error, unconfirmed, resent } = await searchParams;
 
   return (
     <div className="w-full max-w-md">
-      {/* Logo */}
       <div className="text-center mb-8">
         <Link href="/" className="inline-flex items-center gap-2.5">
           <span className="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center text-white text-lg font-black">F</span>
@@ -20,9 +20,32 @@ export default async function LoginPage({ searchParams }: Props) {
       </div>
 
       <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/60 border border-gray-100 p-8">
-        {error && (
+
+        {/* Resent confirmation */}
+        {resent && (
+          <div className="mb-5 flex items-center gap-2 px-4 py-3 rounded-xl bg-green-50 border border-green-100 text-green-700 text-sm">
+            <CheckCircle2 size={16} /> Confirmation email resent — check your inbox.
+          </div>
+        )}
+
+        {/* Error */}
+        {error && !unconfirmed && (
           <div className="mb-5 px-4 py-3 rounded-xl bg-red-50 border border-red-100 text-red-700 text-sm">
             {decodeURIComponent(error)}
+          </div>
+        )}
+
+        {/* Email not confirmed — show resend option */}
+        {unconfirmed && (
+          <div className="mb-5 px-4 py-3 rounded-xl bg-amber-50 border border-amber-200 text-sm">
+            <p className="font-semibold text-amber-800">Email not confirmed yet</p>
+            <p className="text-amber-700 mt-1">Check your inbox for a confirmation link. Can&apos;t find it?</p>
+            <form action={resendConfirmation} className="mt-3">
+              <input type="hidden" name="email" value={decodeURIComponent(unconfirmed)} />
+              <button type="submit" className="text-amber-800 underline font-semibold text-xs hover:text-amber-900">
+                Resend confirmation email →
+              </button>
+            </form>
           </div>
         )}
 
@@ -35,36 +58,31 @@ export default async function LoginPage({ searchParams }: Props) {
         </form>
 
         <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-200" />
-          </div>
+          <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200" /></div>
           <div className="relative flex justify-center">
             <span className="bg-white px-4 text-xs text-gray-400 font-medium">or continue with email</span>
           </div>
         </div>
 
-        {/* Email / password */}
         <form action={signIn} className="space-y-4">
           <div>
             <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Email</label>
-            <input
-              name="email" type="email" required autoComplete="email"
+            <input name="email" type="email" required autoComplete="email"
+              defaultValue={unconfirmed ? decodeURIComponent(unconfirmed) : ""}
               placeholder="you@yourfranchise.com"
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
-            />
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all" />
           </div>
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide">Password</label>
-              <a href="#" className="text-xs text-brand-500 hover:text-brand-600 font-medium">Forgot password?</a>
+              <Link href="/forgot-password" className="text-xs text-brand-500 hover:text-brand-600 font-medium">
+                Forgot password?
+              </Link>
             </div>
-            <input
-              name="password" type="password" required autoComplete="current-password"
+            <input name="password" type="password" required autoComplete="current-password"
               placeholder="••••••••"
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
-            />
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all" />
           </div>
-
           <button type="submit" className="w-full font-bold text-sm px-7 py-3.5 rounded-xl bg-brand-600 text-white hover:bg-brand-700 transition-colors shadow-sm mt-2">
             Sign In
           </button>

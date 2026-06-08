@@ -5,8 +5,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code  = searchParams.get("code");
-  const token = searchParams.get("token"); // employee invite token
-  const type  = searchParams.get("type");  // "invite" | null
+  const token = searchParams.get("token");
+  const type  = searchParams.get("type");
 
   if (code) {
     const supabase = await createClient();
@@ -15,8 +15,8 @@ export async function GET(request: Request) {
     if (!error && data.user) {
       const admin = createAdminClient();
 
-      // If this is an employee invite, create their profile
       if (type === "invite" && token) {
+        // Employee magic-link invite
         const { data: invite } = await admin
           .from("employee_invites")
           .select("franchise_id, full_name")
@@ -31,23 +31,27 @@ export async function GET(request: Request) {
             full_name:    invite.full_name ?? data.user.user_metadata?.full_name,
             franchise_id: invite.franchise_id,
           });
-          await admin
-            .from("employee_invites")
-            .update({ used: true })
-            .eq("token", token);
+          await admin.from("employee_invites").update({ used: true }).eq("token", token);
         }
-      } else {
-        // Google OAuth — ensure profile exists
-        const { data: existing } = await admin
-          .from("profiles")
-          .select("id")
-          .eq("id", data.user.id)
-          .single();
 
-        if (!existing) {
-          // New Google sign-in — we don't know their role yet, send to role selection
-          return NextResponse.redirect(`${origin}/signup?google=1`);
-        }
+        return NextResponse.redirect(`${origin}/dashboard`);
+      }
+
+      if (type === "recovery") {
+        // Password reset — send to reset-password page
+        return NextResponse.redirect(`${origin}/reset-password`);
+      }
+
+      // Email confirmation or Google OAuth — check if profile exists
+      const { data: profile } = await admin
+        .from("profiles")
+        .select("id, role")
+        .eq("id", data.user.id)
+        .single();
+
+      if (!profile) {
+        // New Google sign-in — needs access code
+        return NextResponse.redirect(`${origin}/signup/google-owner`);
       }
 
       return NextResponse.redirect(`${origin}/dashboard`);

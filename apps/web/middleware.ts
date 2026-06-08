@@ -21,12 +21,37 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  // Auth temporarily disabled
-  // const { data: { user } } = await supabase.auth.getUser();
+  // Refresh session — MUST be called before any redirect checks
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const path = request.nextUrl.pathname;
+
+  // Public routes — never redirect
+  const publicPaths = ["/login", "/signup", "/forgot-password", "/reset-password", "/auth/callback", "/onboarding"];
+  const isPublic = publicPaths.some(p => path.startsWith(p));
+
+  // Protect /dashboard and /admin
+  if (!user && (path.startsWith("/dashboard") || path.startsWith("/admin"))) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    url.searchParams.set("next", path);
+    return NextResponse.redirect(url);
+  }
+
+  // Redirect logged-in users away from auth pages (but not onboarding or reset)
+  if (user && (path === "/login" || path === "/signup" || path.startsWith("/signup/"))) {
+    const next = request.nextUrl.searchParams.get("next") ?? "/dashboard";
+    const url  = request.nextUrl.clone();
+    url.pathname = next;
+    url.search = "";
+    return NextResponse.redirect(url);
+  }
 
   return supabaseResponse;
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/admin/:path*", "/login", "/signup/:path*"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
 };

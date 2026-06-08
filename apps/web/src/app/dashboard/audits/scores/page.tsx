@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getLocationScorecards } from "@/lib/audits/queries";
 import { TrendingUp, TrendingDown, Minus, AlertTriangle, CheckCircle2, BarChart2, Star } from "lucide-react";
 import type { LocationScorecard } from "@/types/audits";

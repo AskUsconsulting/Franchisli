@@ -30,9 +30,12 @@ interface Props {
     role: string;
     initials: string;
   };
+  notifications?: Array<{
+    id: string; text: string; time: string; dot: string; unread: boolean;
+  }>;
 }
 
-export default function DashboardShell({ children, user }: Props) {
+export default function DashboardShell({ children, user, notifications = [] }: Props) {
   const pathname    = usePathname();
   const [sidebarOpen,  setSidebarOpen]  = useState(true);
   const [notifOpen,    setNotifOpen]    = useState(false);
@@ -109,26 +112,30 @@ export default function DashboardShell({ children, user }: Props) {
             <div className="relative">
               <button onClick={() => { setNotifOpen(!notifOpen); setProfileOpen(false); }} className="relative p-2 rounded-lg hover:bg-gray-100 text-gray-500">
                 <Bell size={18} />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-accent-500 rounded-full" />
+                {notifications.some(n => n.unread) && (
+                  <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-accent-500 rounded-full" />
+                )}
               </button>
               {notifOpen && (
                 <div className="absolute right-0 mt-1 w-80 bg-white border border-gray-200 rounded-xl shadow-lg z-50 overflow-hidden">
                   <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
                     <span className="font-semibold text-sm">Notifications</span>
-                    <span className="text-xs text-brand-500 cursor-pointer">Mark all read</span>
+                    <span className="text-xs text-gray-400">{notifications.filter(n => n.unread).length} unread</span>
                   </div>
-                  {[
-                    { msg: "Location #4 failed compliance audit", time: "5m ago",  dot: "bg-red-500" },
-                    { msg: "Monthly report is ready to review",   time: "1d ago",  dot: "bg-gray-400" },
-                  ].map((n, i) => (
-                    <div key={i} className="px-4 py-3 flex items-start gap-3 hover:bg-gray-50 cursor-pointer border-b border-gray-50 last:border-0">
-                      <span className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${n.dot}`} />
-                      <div>
-                        <p className="text-sm text-gray-800">{n.msg}</p>
-                        <p className="text-xs text-gray-400 mt-0.5">{n.time}</p>
+                  {notifications.length === 0 ? (
+                    <div className="px-4 py-8 text-center text-gray-400 text-sm">No notifications yet</div>
+                  ) : (
+                    notifications.map((n) => (
+                      <div key={n.id} className={`px-4 py-3 flex items-start gap-3 hover:bg-gray-50 cursor-pointer border-b border-gray-50 last:border-0 ${n.unread ? "bg-brand-50/30" : ""}`}>
+                        <span className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${n.dot}`} />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-gray-800 leading-snug">{n.text}</p>
+                          <p className="text-xs text-gray-400 mt-0.5">{n.time}</p>
+                        </div>
+                        {n.unread && <span className="w-1.5 h-1.5 bg-brand-500 rounded-full mt-2 flex-shrink-0" />}
                       </div>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
               )}
             </div>

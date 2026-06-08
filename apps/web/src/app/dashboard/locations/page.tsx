@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { getLocationProfiles } from "@/lib/locations/queries";
 import { MapPin, Phone, User, ArrowRight, CheckCircle2, AlertCircle, Clock } from "lucide-react";

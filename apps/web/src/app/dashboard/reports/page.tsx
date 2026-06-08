@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getLocationRankings } from "@/lib/reports/queries";
 import { Trophy, Medal, TrendingUp, TrendingDown, Minus, AlertTriangle, CheckCircle2 } from "lucide-react";
 import type { LocationRanking } from "@/types/reports";

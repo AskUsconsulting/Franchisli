@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { getRecentAudits } from "@/lib/audits/queries";
 import { CheckCircle2, AlertTriangle, Clock, Calendar, Zap, ArrowRight, Star } from "lucide-react";

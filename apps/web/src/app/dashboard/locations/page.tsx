@@ -45,9 +45,7 @@ function yearsOpen(dateStr: string | null) {
 
 export default async function LocationsPage() {
   let locations: LocationWithRegion[] = [];
-  let usingDemo = false;
-  try { locations = await getLocationProfiles(); } catch { locations = DEMO_LOCATIONS; usingDemo = true; }
-  if (locations.length === 0) { locations = DEMO_LOCATIONS; usingDemo = true; }
+  try { locations = await getLocationProfiles(); } catch { locations = []; }
 
   const active  = locations.filter((l) => l.status === "active").length;
   const regions = new Set(locations.map((l) => l.region_id)).size;
@@ -59,17 +57,11 @@ export default async function LocationsPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Locations</h1>
           <p className="text-sm text-gray-500 mt-1">
-            {usingDemo ? "Showing sample data — add your first real location below" : `${locations.length} location${locations.length !== 1 ? "s" : ""} in your network`}
+            {locations.length === 0 ? "Add your first location to get started" : `${locations.length} location${locations.length !== 1 ? "s" : ""} in your network`}
           </p>
         </div>
         <AddLocationModal />
       </div>
-
-      {usingDemo && (
-        <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">
-          📋 <strong>Sample data</strong> — Click <strong>Add Location</strong> to start adding your real locations.
-        </div>
-      )}
 
       {/* Summary */}
       <div className="grid grid-cols-3 gap-4">
@@ -86,6 +78,15 @@ export default async function LocationsPage() {
           <div><p className="text-2xl font-bold text-gray-900">{regions}</p><p className="text-xs text-gray-500">Regions</p></div>
         </div>
       </div>
+
+      {/* Empty state */}
+      {locations.length === 0 && (
+        <div className="bg-white border-2 border-dashed border-gray-200 rounded-2xl py-16 text-center">
+          <MapPin size={32} className="mx-auto text-gray-300 mb-3" />
+          <p className="font-semibold text-gray-500 mb-1">No locations yet</p>
+          <p className="text-sm text-gray-400 mb-4">Click "Add Location" to add your first franchise location</p>
+        </div>
+      )}
 
       {/* Location cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

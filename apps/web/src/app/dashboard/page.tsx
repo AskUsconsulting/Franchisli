@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
-  MapPin, Users, ClipboardCheck, CheckSquare, AlertTriangle,
+  MapPin, ClipboardCheck, CheckSquare, AlertTriangle,
   ArrowRight, Clock, TrendingUp, TrendingDown, Plus,
 } from "lucide-react";
 import Link from "next/link";
@@ -91,14 +91,9 @@ export default async function DashboardPage() {
             {totalLocations > 0 ? `${totalLocations} location${totalLocations !== 1 ? "s" : ""} in your network` : "Welcome — let's get your network set up"}
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Link href="/dashboard/reports" className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 hover:bg-gray-50 bg-white transition-colors">
-            View Reports
-          </Link>
-          <Link href="/dashboard/audits/conduct" className="flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-medium transition-colors">
-            <Plus size={15} /> New Audit
-          </Link>
-        </div>
+        <Link href="/dashboard/reports" className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 hover:bg-gray-50 bg-white transition-colors">
+          View Reports
+        </Link>
       </div>
 
       {/* Empty state for brand new users */}

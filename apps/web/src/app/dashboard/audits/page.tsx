@@ -29,8 +29,7 @@ function timeAgo(d: string) {
 
 export default async function AuditsOverviewPage() {
   let audits: AuditWithDetails[] = [];
-  try { audits = await getRecentAudits(); } catch { audits = DEMO_AUDITS; }
-  if (audits.length === 0) audits = DEMO_AUDITS;
+  try { audits = await getRecentAudits(); } catch { audits = []; }
 
   const submitted   = audits.filter((a) => a.status === "submitted");
   const avgScore    = submitted.length > 0 ? Math.round(submitted.reduce((s, a) => s + (a.score ?? 0), 0) / submitted.length) : 0;
@@ -57,18 +56,18 @@ export default async function AuditsOverviewPage() {
         ))}
       </div>
 
-      {/* Upcoming scheduled */}
+      {/* CTA to conduct first audit */}
       <div className="bg-brand-50 border border-brand-200 rounded-xl p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Calendar size={18} className="text-brand-600" />
             <div>
-              <p className="font-semibold text-brand-800">Upcoming Scheduled Audits</p>
-              <p className="text-sm text-brand-600 mt-0.5">Midtown — Jun 2 · Marietta — Jun 5 · Buckhead — Jun 10</p>
+              <p className="font-semibold text-brand-800">Ready to audit a location?</p>
+              <p className="text-sm text-brand-600 mt-0.5">Conduct your first audit to start tracking compliance scores</p>
             </div>
           </div>
           <Link href="/dashboard/audits/conduct" className="text-sm text-brand-600 hover:text-brand-700 font-medium flex items-center gap-1">
-            Start one now <ArrowRight size={13} />
+            Start now <ArrowRight size={13} />
           </Link>
         </div>
       </div>
@@ -77,9 +76,19 @@ export default async function AuditsOverviewPage() {
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
           <h2 className="font-semibold text-gray-900">Recent Audits</h2>
-          <Link href="/dashboard/audits/scores" className="text-xs text-brand-500 hover:text-brand-600 flex items-center gap-1">View scores <ArrowRight size={12} /></Link>
+          {audits.length > 0 && <Link href="/dashboard/audits/scores" className="text-xs text-brand-500 hover:text-brand-600 flex items-center gap-1">View scores <ArrowRight size={12} /></Link>}
         </div>
-        <table className="w-full text-sm">
+        {audits.length === 0 && (
+          <div className="py-14 text-center text-gray-400">
+            <CheckCircle2 size={32} className="mx-auto mb-3 opacity-30" />
+            <p className="text-sm font-medium">No audits yet</p>
+            <p className="text-xs mt-1">Conduct your first audit to see results here</p>
+            <Link href="/dashboard/audits/conduct" className="mt-4 inline-block text-sm font-semibold text-brand-500 hover:text-brand-600">
+              Conduct first audit →
+            </Link>
+          </div>
+        )}
+        {audits.length > 0 && <table className="w-full text-sm">
           <thead>
             <tr className="text-xs text-gray-400 uppercase tracking-wide bg-gray-50">
               <th className="text-left px-5 py-3 font-medium">Location</th>
@@ -126,7 +135,7 @@ export default async function AuditsOverviewPage() {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table>}
       </div>
     </div>
   );

@@ -7,10 +7,17 @@ import {
 } from "lucide-react";
 import { updateProfile, resetPassword, inviteEmployee } from "@/app/actions/auth";
 
-const TABS = [
+const OWNER_TABS = [
   { id: "profile",       label: "Profile",       icon: User },
   { id: "organization",  label: "Organization",  icon: Building2 },
   { id: "team",          label: "Team & Access", icon: Users },
+  { id: "notifications", label: "Notifications", icon: Bell },
+  { id: "security",      label: "Security",      icon: Shield },
+];
+
+const EMPLOYEE_TABS = [
+  { id: "profile",       label: "Profile",       icon: User },
+  { id: "team",          label: "Team",          icon: Users },
   { id: "notifications", label: "Notifications", icon: Bell },
   { id: "security",      label: "Security",      icon: Shield },
 ];
@@ -20,6 +27,13 @@ interface UserData {
   full_name: string;
   business_name: string;
   role: string;
+}
+
+interface TeamMember {
+  id: string;
+  full_name: string;
+  role: string;
+  isSelf: boolean;
 }
 
 /* ── Profile Tab ──────────────────────────────────────────────────────────── */
@@ -89,7 +103,11 @@ function OrganizationTab({ user }: { user: UserData }) {
 }
 
 /* ── Team Tab ─────────────────────────────────────────────────────────────── */
-function TeamTab() {
+const AVATAR_COLORS = ["bg-blue-500","bg-purple-500","bg-green-500","bg-orange-500","bg-indigo-500","bg-pink-500","bg-teal-500"];
+function avatarColor(name: string) { return AVATAR_COLORS[(name.charCodeAt(0) || 0) % AVATAR_COLORS.length]; }
+function initials(name: string) { return name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || "?"; }
+
+function TeamTab({ role, teamMembers }: { role: string; teamMembers: TeamMember[] }) {
   const [showInvite, setShowInvite]   = useState(false);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteName,  setInviteName]  = useState("");
@@ -108,12 +126,42 @@ function TeamTab() {
     setTimeout(() => setSentMsg(""), 4000);
   }
 
+  // ── Employee view: read-only list of teammates, no roles, no actions ──
+  if (role === "employee") {
+    const others = teamMembers.filter(m => !m.isSelf);
+    return (
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-lg font-semibold text-gray-900">Team</h2>
+          <p className="text-sm text-gray-500 mt-1">Your teammates at this franchise</p>
+        </div>
+        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+          {others.length === 0 ? (
+            <div className="py-10 text-center text-gray-400 text-sm">No other team members yet</div>
+          ) : (
+            <div className="divide-y divide-gray-50">
+              {others.map(m => (
+                <div key={m.id} className="flex items-center gap-3 px-5 py-3.5">
+                  <div className={`w-9 h-9 rounded-full ${avatarColor(m.full_name)} flex items-center justify-center text-white text-xs font-bold flex-shrink-0`}>
+                    {initials(m.full_name)}
+                  </div>
+                  <p className="text-sm font-medium text-gray-800">{m.full_name}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ── Owner view: full management ──
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-gray-900">Team & Access</h2>
-          <p className="text-sm text-gray-500 mt-1">Invite employees to access their location dashboard</p>
+          <p className="text-sm text-gray-500 mt-1">Invite employees and manage who has access</p>
         </div>
         <button onClick={() => setShowInvite(!showInvite)}
           className="flex items-center gap-2 bg-brand-600 text-white text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-brand-700 transition-colors">
@@ -146,6 +194,28 @@ function TeamTab() {
           <p className="text-xs text-brand-600 mt-2">They&apos;ll receive an email with a link to create their account.</p>
         </div>
       )}
+
+      {/* Member list with roles (owner only) */}
+      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <div className="px-5 py-3 bg-gray-50 border-b border-gray-100">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{teamMembers.length} member{teamMembers.length !== 1 ? "s" : ""}</p>
+        </div>
+        {teamMembers.length === 0 ? (
+          <div className="py-10 text-center text-gray-400 text-sm">No employees yet — invite your first above</div>
+        ) : (
+          <div className="divide-y divide-gray-50">
+            {teamMembers.map(m => (
+              <div key={m.id} className="flex items-center gap-3 px-5 py-3.5">
+                <div className={`w-9 h-9 rounded-full ${avatarColor(m.full_name)} flex items-center justify-center text-white text-xs font-bold flex-shrink-0`}>
+                  {initials(m.full_name)}
+                </div>
+                <p className="text-sm font-medium text-gray-800 flex-1">{m.full_name}{m.isSelf && <span className="text-gray-400 font-normal"> (you)</span>}</p>
+                <span className="text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full font-medium capitalize">{m.role}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -191,7 +261,7 @@ function NotificationsTab() {
 }
 
 /* ── Security Tab ─────────────────────────────────────────────────────────── */
-function SecurityTab() {
+function SecurityTab({ role }: { role: string }) {
   const [show, setShow] = useState(false);
   return (
     <div className="space-y-6">
@@ -220,19 +290,21 @@ function SecurityTab() {
           </button>
         </form>
       </div>
-      <div className="bg-red-50 border border-red-200 rounded-xl p-6">
-        <h3 className="font-semibold text-red-800 text-sm mb-1">Danger Zone</h3>
-        <p className="text-xs text-red-600 mb-4">Permanently delete your account. This cannot be undone.</p>
-        <button className="flex items-center gap-2 text-sm font-semibold text-red-600 border border-red-300 px-4 py-2.5 rounded-xl hover:bg-red-100 transition-colors">
-          <Trash2 size={15} /> Delete Account
-        </button>
-      </div>
+      {role === "owner" && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-6">
+          <h3 className="font-semibold text-red-800 text-sm mb-1">Danger Zone</h3>
+          <p className="text-xs text-red-600 mb-4">Permanently delete your account. This cannot be undone.</p>
+          <button className="flex items-center gap-2 text-sm font-semibold text-red-600 border border-red-300 px-4 py-2.5 rounded-xl hover:bg-red-100 transition-colors">
+            <Trash2 size={15} /> Delete Account
+          </button>
+        </div>
+      )}
     </div>
   );
 }
 
 /* ── Main ─────────────────────────────────────────────────────────────────── */
-export default function SettingsClient({ user, savedToast }: { user: UserData; savedToast: boolean }) {
+export default function SettingsClient({ user, teamMembers, savedToast }: { user: UserData; teamMembers: TeamMember[]; savedToast: boolean }) {
   const [activeTab, setActiveTab] = useState("profile");
   const [toast, setToast] = useState(savedToast);
 
@@ -240,12 +312,14 @@ export default function SettingsClient({ user, savedToast }: { user: UserData; s
     if (savedToast) { setToast(true); setTimeout(() => setToast(false), 3000); }
   }, [savedToast]);
 
+  const TABS = user.role === "owner" ? OWNER_TABS : EMPLOYEE_TABS;
+
   const TAB_CONTENT: Record<string, React.ReactNode> = {
     profile:       <ProfileTab user={user} />,
     organization:  <OrganizationTab user={user} />,
-    team:          <TeamTab />,
+    team:          <TeamTab role={user.role} teamMembers={teamMembers} />,
     notifications: <NotificationsTab />,
-    security:      <SecurityTab />,
+    security:      <SecurityTab role={user.role} />,
   };
 
   return (

@@ -8,15 +8,12 @@ export default async function FranchiseesPage() {
   const admin = createAdminClient();
   const { data: locations } = await admin
     .from("locations")
-    .select("id, name, address, status, phone, manager_name, franchisee_name, open_date, compliance_score")
+    .select("id, name, address, status, phone, manager_name, franchisee_name, open_date")
     .order("name");
 
-  const locs = locations ?? [];
-  const active      = locs.filter(l => l.status === "active").length;
-  const onboarding  = locs.filter(l => l.status === "onboarding").length;
-  const avgScore    = locs.filter((l: { compliance_score?: number }) => l.compliance_score).length > 0
-    ? Math.round(locs.filter((l: { compliance_score?: number }) => l.compliance_score).reduce((s: number, l: { compliance_score?: number }) => s + (l.compliance_score ?? 0), 0) / locs.filter((l: { compliance_score?: number }) => l.compliance_score).length)
-    : null;
+  const locs      = locations ?? [];
+  const active    = locs.filter(l => l.status === "active").length;
+  const avgScore  = null; // will populate once audit scores are linked
 
   function initials(name: string) {
     return name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
@@ -82,21 +79,6 @@ export default async function FranchiseesPage() {
                 loc.status === "onboarding" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"
               }`}>{loc.status}</span>
             </div>
-
-            {loc.compliance_score && (
-              <div className="mb-4">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-xs text-gray-500 font-medium">Compliance Score</span>
-                  <span className={`text-sm font-bold ${loc.compliance_score >= 90 ? "text-green-600" : loc.compliance_score >= 80 ? "text-yellow-600" : "text-red-600"}`}>
-                    {loc.compliance_score}%
-                  </span>
-                </div>
-                <div className="w-full bg-gray-100 rounded-full h-2">
-                  <div className={`h-2 rounded-full ${loc.compliance_score >= 90 ? "bg-green-500" : loc.compliance_score >= 80 ? "bg-yellow-500" : "bg-red-500"}`}
-                    style={{ width: `${loc.compliance_score}%` }} />
-                </div>
-              </div>
-            )}
 
             <div className="flex items-center gap-4 pt-3 border-t border-gray-100 text-xs text-gray-500">
               {loc.address && <span className="flex items-center gap-1"><MapPin size={11} /> {loc.address}</span>}

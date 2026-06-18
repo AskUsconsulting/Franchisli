@@ -4,22 +4,24 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, MapPin, ClipboardCheck, FileText,
-  CheckSquare, BarChart2, Settings, Bell,
+  CheckSquare, BarChart2, Settings, Bell, Clock,
   Search, ChevronDown, LogOut, Menu, X, Workflow,
 } from "lucide-react";
 import { useState } from "react";
 import { signOut } from "@/app/actions/auth";
 
+// roles: "all" = everyone, "owner" = owner-only, "employee" = employee-only
 const NAV_ITEMS = [
-  { label: "Dashboard",    href: "/dashboard",             icon: LayoutDashboard },
-  { label: "Operations",   href: "/dashboard/operations",  icon: Workflow },
-  { label: "Locations",    href: "/dashboard/locations",   icon: MapPin },
-  { label: "Audits",       href: "/dashboard/audits",      icon: ClipboardCheck },
-  { label: "Documents",    href: "/dashboard/documents",   icon: FileText },
-  { label: "Tasks",        href: "/dashboard/tasks",       icon: CheckSquare },
-  { label: "Reports",      href: "/dashboard/reports",     icon: BarChart2 },
-  { label: "Settings",     href: "/dashboard/settings",    icon: Settings },
-];
+  { label: "Dashboard",    href: "/dashboard",             icon: LayoutDashboard, roles: "all" },
+  { label: "Operations",   href: "/dashboard/operations",  icon: Workflow,        roles: "all" },
+  { label: "Locations",    href: "/dashboard/locations",   icon: MapPin,          roles: "owner" },
+  { label: "Audits",       href: "/dashboard/audits",      icon: ClipboardCheck,  roles: "owner" },
+  { label: "Documents",    href: "/dashboard/documents",   icon: FileText,        roles: "all" },
+  { label: "Tasks",        href: "/dashboard/tasks",       icon: CheckSquare,     roles: "all" },
+  { label: "Timesheets",   href: "/dashboard/timesheets",  icon: Clock,           roles: "employee" },
+  { label: "Reports",      href: "/dashboard/reports",     icon: BarChart2,       roles: "owner" },
+  { label: "Settings",     href: "/dashboard/settings",    icon: Settings,        roles: "all" },
+] as const;
 
 interface Props {
   children: React.ReactNode;
@@ -54,7 +56,9 @@ export default function DashboardShell({ children, user, notifications = [] }: P
 
         {/* Nav */}
         <nav className="flex-1 py-4 overflow-y-auto">
-          {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
+          {NAV_ITEMS.filter(item =>
+            item.roles === "all" || item.roles === user.role
+          ).map(({ label, href, icon: Icon }) => {
             const active = href === "/dashboard" ? pathname === href : pathname.startsWith(href);
             return (
               <Link

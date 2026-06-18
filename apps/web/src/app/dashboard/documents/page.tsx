@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import { getDocuments } from "@/lib/documents/queries";
 import DocumentsClient from "./_components/DocumentsClient";
 import type { DocumentWithDetails } from "@/types/documents";
+import { getCurrentUser } from "@/lib/auth/guards";
 
 // One starter example shown to new users
 const EXAMPLE_DOC: DocumentWithDetails[] = [
@@ -10,6 +11,7 @@ const EXAMPLE_DOC: DocumentWithDetails[] = [
 ] as unknown as DocumentWithDetails[];
 
 export default async function DocumentsPage() {
+  const user = await getCurrentUser();
   let docs: DocumentWithDetails[] = [];
   let usingExample = false;
 
@@ -21,5 +23,5 @@ export default async function DocumentsPage() {
     usingExample = true;
   }
 
-  return <DocumentsClient docs={docs} usingDemo={usingExample} />;
+  return <DocumentsClient docs={docs} usingDemo={usingExample} canUpload={user.role === "owner"} />;
 }

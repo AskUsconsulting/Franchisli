@@ -49,7 +49,7 @@ function isOverdue(due: string | null, status: string) {
   return new Date(due) < new Date();
 }
 
-export default function TasksClient({ initialTasks, usingDemo }: { initialTasks: Task[]; usingDemo: boolean }) {
+export default function TasksClient({ initialTasks, usingDemo, canAdd = true }: { initialTasks: Task[]; usingDemo: boolean; canAdd?: boolean }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [filter,    setFilter]    = useState("All");
@@ -155,15 +155,19 @@ export default function TasksClient({ initialTasks, usingDemo }: { initialTasks:
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Tasks</h1>
           <p className="text-sm text-gray-500 mt-1">
-            {usingDemo ? "Showing sample data — create your first task below" : `${tasks.length} task${tasks.length !== 1 ? "s" : ""} in your network`}
+            {canAdd
+              ? (usingDemo ? "Showing sample data — create your first task below" : `${tasks.length} task${tasks.length !== 1 ? "s" : ""} in your network`)
+              : "Your assigned tasks — check them off as you complete them"}
           </p>
         </div>
-        <button onClick={() => setModalOpen(true)} className="flex items-center gap-2 bg-brand-600 text-white text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-brand-700 transition-colors shadow-sm">
-          <Plus size={16} /> New Task
-        </button>
+        {canAdd && (
+          <button onClick={() => setModalOpen(true)} className="flex items-center gap-2 bg-brand-600 text-white text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-brand-700 transition-colors shadow-sm">
+            <Plus size={16} /> New Task
+          </button>
+        )}
       </div>
 
-      {usingDemo && (
+      {usingDemo && canAdd && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">
           📋 <strong>Sample data</strong> — Click <strong>New Task</strong> to create your first real task.
         </div>

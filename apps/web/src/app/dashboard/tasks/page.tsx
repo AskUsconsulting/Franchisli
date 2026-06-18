@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import TasksClient from "./_components/TasksClient";
+import { getCurrentUser } from "@/lib/auth/guards";
 
 interface Task {
   id: string;
@@ -15,6 +16,7 @@ interface Task {
 }
 
 export default async function TasksPage() {
+  const user = await getCurrentUser();
   let tasks: Task[] = [];
 
   try {
@@ -30,5 +32,5 @@ export default async function TasksPage() {
     tasks = [];
   }
 
-  return <TasksClient initialTasks={tasks} usingDemo={false} />;
+  return <TasksClient initialTasks={tasks} usingDemo={false} canAdd={user.role === "owner"} />;
 }

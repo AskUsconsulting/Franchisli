@@ -20,7 +20,7 @@ function timeAgo(d: string) {
   return days === 0 ? "Today" : days === 1 ? "Yesterday" : `${days}d ago`;
 }
 
-export default function DocumentsClient({ docs, usingDemo }: { docs: DocumentWithDetails[]; usingDemo: boolean }) {
+export default function DocumentsClient({ docs, usingDemo, canUpload = true }: { docs: DocumentWithDetails[]; usingDemo: boolean; canUpload?: boolean }) {
   const [search,     setSearch]     = useState("");
   const [category,   setCategory]   = useState("All");
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -40,13 +40,15 @@ export default function DocumentsClient({ docs, usingDemo }: { docs: DocumentWit
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Documents & SOPs</h1>
           <p className="text-sm text-gray-500 mt-1">
-            {usingDemo ? "Showing sample data — upload your first document below" : `${docs.length} document${docs.length !== 1 ? "s" : ""}`}
+            {canUpload
+              ? (usingDemo ? "Showing sample data — upload your first document below" : `${docs.length} document${docs.length !== 1 ? "s" : ""}`)
+              : "Reference your franchise's SOPs, policies, and standards"}
           </p>
         </div>
-        <UploadDocumentModal />
+        {canUpload && <UploadDocumentModal />}
       </div>
 
-      {usingDemo && (
+      {usingDemo && canUpload && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">
           📋 <strong>Sample data</strong> — Click <strong>Upload Document</strong> to add your real SOPs and policies.
         </div>

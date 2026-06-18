@@ -47,6 +47,23 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // Role-based protection — block employees from owner-only sections
+  const OWNER_ONLY = ["/dashboard/locations", "/dashboard/audits", "/dashboard/reports", "/admin"];
+  if (user && OWNER_ONLY.some(p => path.startsWith(p))) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (profile?.role === "employee") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/dashboard";
+      url.search = "";
+      return NextResponse.redirect(url);
+    }
+  }
+
   return supabaseResponse;
 }
 

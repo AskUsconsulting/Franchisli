@@ -8,6 +8,8 @@ import {
 import Link from "next/link";
 import AuditChart from "./_components/AuditChart";
 import QuickActions from "./_components/QuickActions";
+import EmployeeHome from "./_components/EmployeeHome";
+import { getCurrentUser } from "@/lib/auth/guards";
 
 function StatusBadge({ status }: { status: string }) {
   const s: Record<string, string> = {
@@ -29,8 +31,34 @@ function PriorityDot({ priority }: { priority: string }) {
 }
 
 export default async function DashboardPage() {
+  const currentUser = await getCurrentUser();
   const admin = createAdminClient();
 
+  // ── Employee view — focused on their own tasks & hours ──
+  if (currentUser.role === "employee") {
+    const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().split("T")[0];
+    const [{ data: empTasks }, { data: empSheets }] = await Promise.all([
+      admin.from("tasks").select("id, title, priority, due_date, status").order("created_at", { ascending: false }).limit(10),
+      admin.from("timesheets").select("hours, status, work_date").eq("user_id", currentUser.id),
+    ]).catch(() => [{ data: [] }, { data: [] }]);
+
+    const sheets = empSheets ?? [];
+    const hoursThisWeek = sheets
+      .filter((s: { work_date: string }) => s.work_date >= weekAgo)
+      .reduce((sum: number, s: { hours: number | null }) => sum + (s.hours ?? 0), 0);
+    const pendingTimesheets = sheets.filter((s: { status: string }) => s.status === "submitted").length;
+
+    return (
+      <EmployeeHome
+        fullName={currentUser.fullName}
+        tasks={(empTasks ?? []) as { id: string; title: string; priority: string; due_date: string | null; status: string }[]}
+        hoursThisWeek={hoursThisWeek}
+        pendingTimesheets={pendingTimesheets}
+      />
+    );
+  }
+
+  // ── Owner view — full network dashboard ──
   // Fetch all real data in parallel
   const [
     { data: locations },

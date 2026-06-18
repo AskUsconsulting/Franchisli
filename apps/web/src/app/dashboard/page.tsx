@@ -110,8 +110,8 @@ export default async function DashboardPage() {
             <Link href="/dashboard/locations" className="bg-brand-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-brand-700 transition-colors">
               Add Locations →
             </Link>
-            <Link href="/dashboard/franchisees" className="border border-brand-300 text-brand-700 text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-brand-50 transition-colors">
-              Add Franchisees →
+            <Link href="/dashboard/audits/conduct" className="border border-brand-300 text-brand-700 text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-brand-50 transition-colors">
+              Conduct an Audit →
             </Link>
           </div>
         </div>

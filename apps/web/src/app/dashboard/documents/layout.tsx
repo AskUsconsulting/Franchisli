@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, Shield, FileCheck, Plus } from "lucide-react";
+import { BookOpen, Shield, FileCheck } from "lucide-react";
 
 const TABS = [
   { label: "SOPs",             href: "/dashboard/documents",                  icon: BookOpen },
@@ -14,19 +14,11 @@ export default function DocumentsLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-gray-900">Documents & Knowledge</h1>
-          <p className="text-sm text-gray-500 mt-0.5">
-            SOP library, brand standards, and policy acknowledgment tracking
-          </p>
-        </div>
-        <Link
-          href="#"
-          className="flex items-center gap-2 bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 rounded-lg text-sm font-medium"
-        >
-          <Plus size={15} /> Add Document
-        </Link>
+      <div>
+        <h1 className="text-xl font-bold text-gray-900">Documents & Knowledge</h1>
+        <p className="text-sm text-gray-500 mt-0.5">
+          SOP library, brand standards, and policy acknowledgment tracking
+        </p>
       </div>
       <div className="border-b border-gray-200">
         <nav className="flex gap-1 -mb-px">

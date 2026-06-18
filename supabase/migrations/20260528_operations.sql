@@ -170,7 +170,7 @@ INSERT INTO checklist_items (checklist_id, text, category, item_order, required)
 
 -- Opening Procedure
 INSERT INTO procedures (id, title, type, location_id, steps, created_by) VALUES (
-  'p0000000-0000-0000-0000-000000000001',
+  'b1000000-0000-0000-0000-000000000001',
   'Standard Opening Procedure',
   'opening',
   NULL,
@@ -188,7 +188,7 @@ INSERT INTO procedures (id, title, type, location_id, steps, created_by) VALUES 
 
 -- Closing Procedure
 INSERT INTO procedures (id, title, type, location_id, steps, created_by) VALUES (
-  'p0000000-0000-0000-0000-000000000002',
+  'b1000000-0000-0000-0000-000000000002',
   'Standard Closing Procedure',
   'closing',
   NULL,
@@ -206,17 +206,17 @@ INSERT INTO procedures (id, title, type, location_id, steps, created_by) VALUES 
 
 -- Sample Checklist Runs (today)
 INSERT INTO checklist_runs (id, checklist_id, location_id, submitted_by, date, shift, status, completed_at) VALUES
-  ('r0000000-0000-0000-0000-000000000001', 'c0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000001', 'Marcus J.', CURRENT_DATE, 'morning',  'completed', NOW() - INTERVAL '4 hours'),
-  ('r0000000-0000-0000-0000-000000000002', 'c0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000002', 'Sandra K.', CURRENT_DATE, 'morning',  'completed', NOW() - INTERVAL '3 hours'),
-  ('r0000000-0000-0000-0000-000000000003', 'c0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000003', 'Derek L.',  CURRENT_DATE, 'morning',  'in_progress', NULL),
-  ('r0000000-0000-0000-0000-000000000004', 'c0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000004', 'Tanya R.',  CURRENT_DATE, 'morning',  'flagged',  NULL),
-  ('r0000000-0000-0000-0000-000000000005', 'c0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000005', 'James P.',  CURRENT_DATE, 'morning',  'completed', NOW() - INTERVAL '2 hours')
+  ('b2000000-0000-0000-0000-000000000001', 'c0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000001', 'Marcus J.', CURRENT_DATE, 'morning',  'completed', NOW() - INTERVAL '4 hours'),
+  ('b2000000-0000-0000-0000-000000000002', 'c0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000002', 'Sandra K.', CURRENT_DATE, 'morning',  'completed', NOW() - INTERVAL '3 hours'),
+  ('b2000000-0000-0000-0000-000000000003', 'c0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000003', 'Derek L.',  CURRENT_DATE, 'morning',  'in_progress', NULL),
+  ('b2000000-0000-0000-0000-000000000004', 'c0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000004', 'Tanya R.',  CURRENT_DATE, 'morning',  'flagged',  NULL),
+  ('b2000000-0000-0000-0000-000000000005', 'c0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000005', 'James P.',  CURRENT_DATE, 'morning',  'completed', NOW() - INTERVAL '2 hours')
 ON CONFLICT (id) DO NOTHING;
 
 -- Sample Handover Notes
 INSERT INTO shift_handover_notes (id, location_id, written_by, from_shift, to_shift, date, summary, items, is_read) VALUES
 (
-  'h0000000-0000-0000-0000-000000000001',
+  'b3000000-0000-0000-0000-000000000001',
   'a0000000-0000-0000-0000-000000000001',
   'Marcus J.',
   'evening', 'morning',
@@ -230,7 +230,7 @@ INSERT INTO shift_handover_notes (id, location_id, written_by, from_shift, to_sh
   FALSE
 ),
 (
-  'h0000000-0000-0000-0000-000000000002',
+  'b3000000-0000-0000-0000-000000000002',
   'a0000000-0000-0000-0000-000000000002',
   'Sandra K.',
   'evening', 'morning',
@@ -243,7 +243,7 @@ INSERT INTO shift_handover_notes (id, location_id, written_by, from_shift, to_sh
   TRUE
 ),
 (
-  'h0000000-0000-0000-0000-000000000003',
+  'b3000000-0000-0000-0000-000000000003',
   'a0000000-0000-0000-0000-000000000004',
   'Tanya R.',
   'afternoon', 'evening',

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard, MapPin, Users, ClipboardCheck, FileText,
+  LayoutDashboard, MapPin, ClipboardCheck, FileText,
   CheckSquare, BarChart2, Settings, Bell,
   Search, ChevronDown, LogOut, Menu, X, Workflow,
 } from "lucide-react";
@@ -14,7 +14,6 @@ const NAV_ITEMS = [
   { label: "Dashboard",    href: "/dashboard",             icon: LayoutDashboard },
   { label: "Operations",   href: "/dashboard/operations",  icon: Workflow },
   { label: "Locations",    href: "/dashboard/locations",   icon: MapPin },
-  { label: "Franchisees",  href: "/dashboard/franchisees", icon: Users },
   { label: "Audits",       href: "/dashboard/audits",      icon: ClipboardCheck },
   { label: "Documents",    href: "/dashboard/documents",   icon: FileText },
   { label: "Tasks",        href: "/dashboard/tasks",       icon: CheckSquare },

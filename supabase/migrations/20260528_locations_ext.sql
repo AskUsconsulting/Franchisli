@@ -25,13 +25,13 @@ CREATE POLICY "allow_all_regions" ON regions FOR ALL USING (true) WITH CHECK (tr
 -- ── Seed regions ───────────────────────────────────────────────────────────────
 
 INSERT INTO regions (id, name, description, color) VALUES
-  ('re000001-0000-0000-0000-000000000001', 'Metro Core',   'Downtown, Buckhead, Midtown, Decatur',  '#2c4fa3'),
-  ('re000001-0000-0000-0000-000000000002', 'North Metro',  'Marietta and Smyrna corridors',          '#16a34a');
+  ('b7000001-0000-0000-0000-000000000001', 'Metro Core',   'Downtown, Buckhead, Midtown, Decatur',  '#2c4fa3'),
+  ('b7000001-0000-0000-0000-000000000002', 'North Metro',  'Marietta and Smyrna corridors',          '#16a34a');
 
 -- ── Update location details ───────────────────────────────────────────────────
 
 UPDATE locations SET
-  region_id        = 're000001-0000-0000-0000-000000000001',
+  region_id        = 'b7000001-0000-0000-0000-000000000001',
   phone            = '(404) 555-0101',
   email            = 'downtown@franchisli.com',
   manager_name     = 'Marcus Williams',
@@ -42,7 +42,7 @@ UPDATE locations SET
 WHERE id = 'a0000000-0000-0000-0000-000000000001';
 
 UPDATE locations SET
-  region_id        = 're000001-0000-0000-0000-000000000001',
+  region_id        = 'b7000001-0000-0000-0000-000000000001',
   phone            = '(404) 555-0202',
   email            = 'buckhead@franchisli.com',
   manager_name     = 'Priya Patel',
@@ -53,7 +53,7 @@ UPDATE locations SET
 WHERE id = 'a0000000-0000-0000-0000-000000000002';
 
 UPDATE locations SET
-  region_id        = 're000001-0000-0000-0000-000000000001',
+  region_id        = 'b7000001-0000-0000-0000-000000000001',
   phone            = '(404) 555-0303',
   email            = 'midtown@franchisli.com',
   manager_name     = 'DeShawn Taylor',
@@ -64,7 +64,7 @@ UPDATE locations SET
 WHERE id = 'a0000000-0000-0000-0000-000000000003';
 
 UPDATE locations SET
-  region_id        = 're000001-0000-0000-0000-000000000001',
+  region_id        = 'b7000001-0000-0000-0000-000000000001',
   phone            = '(404) 555-0404',
   email            = 'decatur@franchisli.com',
   manager_name     = 'Kwame Asante',
@@ -75,7 +75,7 @@ UPDATE locations SET
 WHERE id = 'a0000000-0000-0000-0000-000000000004';
 
 UPDATE locations SET
-  region_id        = 're000001-0000-0000-0000-000000000002',
+  region_id        = 'b7000001-0000-0000-0000-000000000002',
   phone            = '(770) 555-0505',
   email            = 'marietta@franchisli.com',
   manager_name     = 'Tanya Brooks',
@@ -86,7 +86,7 @@ UPDATE locations SET
 WHERE id = 'a0000000-0000-0000-0000-000000000005';
 
 UPDATE locations SET
-  region_id        = 're000001-0000-0000-0000-000000000002',
+  region_id        = 'b7000001-0000-0000-0000-000000000002',
   phone            = '(770) 555-0606',
   email            = 'smyrna@franchisli.com',
   manager_name     = 'Carlos Rivera',

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { MapPin, Users, ClipboardCheck, FileText, DollarSign, CheckCircle2, Loader2 } from "lucide-react";
+import { MapPin, ClipboardCheck, FileText, DollarSign, CheckCircle2, Loader2 } from "lucide-react";
 import Modal from "@/components/Modal";
 import { addLocation } from "@/app/actions/locations";
 import { addTask } from "@/app/actions/tasks";
@@ -42,11 +42,10 @@ export default function QuickActions() {
   }
 
   const ACTIONS = [
-    { label: "Add Location",    icon: MapPin,         color: "border-blue-200 text-blue-600 hover:bg-blue-50",    modal: "location" },
-    { label: "Add Franchisee",  icon: Users,          color: "border-purple-200 text-purple-600 hover:bg-purple-50", modal: "franchisee" },
-    { label: "Conduct Audit",   icon: ClipboardCheck, color: "border-yellow-200 text-yellow-700 hover:bg-yellow-50", href: "/dashboard/audits/conduct" },
-    { label: "Add Task",        icon: FileText,        color: "border-gray-200 text-gray-600 hover:bg-gray-50",    modal: "task" },
-    { label: "Reports",         icon: DollarSign,     color: "border-emerald-200 text-emerald-600 hover:bg-emerald-50", href: "/dashboard/reports" },
+    { label: "Add Location",  icon: MapPin,         color: "border-blue-200 text-blue-600 hover:bg-blue-50",      modal: "location" },
+    { label: "Conduct Audit", icon: ClipboardCheck, color: "border-yellow-200 text-yellow-700 hover:bg-yellow-50", href: "/dashboard/audits/conduct" },
+    { label: "Add Task",      icon: FileText,        color: "border-gray-200 text-gray-600 hover:bg-gray-50",      modal: "task" },
+    { label: "Reports",       icon: DollarSign,     color: "border-emerald-200 text-emerald-600 hover:bg-emerald-50", href: "/dashboard/reports" },
   ];
 
   return (

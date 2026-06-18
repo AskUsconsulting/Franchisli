@@ -68,46 +68,46 @@ CREATE POLICY "allow_all_bulletin_posts"     ON bulletin_posts      FOR ALL USIN
 -- ── Seed data ──────────────────────────────────────────────────────────────────
 
 INSERT INTO announcements (id, title, body, author, target_type, target_location_id, priority, is_pinned, created_at) VALUES
-  ('an000001-0000-0000-0000-000000000001', 'New Summer Menu Launch — June 15',
+  ('b8000001-0000-0000-0000-000000000001', 'New Summer Menu Launch — June 15',
    'All locations must update menu boards and POS by June 15. New items include the Peach Lemonade Freeze and the Summer BBQ Wrap. Training materials are in the SOP library.',
    'HQ', 'all', NULL, 'urgent', true,
    NOW() - INTERVAL '2 days'),
-  ('an000001-0000-0000-0000-000000000002', 'Updated Food Safety Policy v2.3',
+  ('b8000001-0000-0000-0000-000000000002', 'Updated Food Safety Policy v2.3',
    'The revised Food Safety Policy (v2.3) is now live in the Documents library. All locations must complete acknowledgment by June 5. Key changes: temperature logging frequency increased to every 2 hours.',
    'HQ', 'all', NULL, 'urgent', false,
    NOW() - INTERVAL '4 days'),
-  ('an000001-0000-0000-0000-000000000003', 'Q2 Audit Schedule Released',
+  ('b8000001-0000-0000-0000-000000000003', 'Q2 Audit Schedule Released',
    'Q2 surprise audits will begin June 1. Locations will be notified 24 hours before. Review the inspection checklist in the SOP library to ensure readiness.',
    'HQ', 'all', NULL, 'normal', false,
    NOW() - INTERVAL '6 days'),
-  ('an000001-0000-0000-0000-000000000004', 'Action Required: Decatur Compliance Issues',
+  ('b8000001-0000-0000-0000-000000000004', 'Action Required: Decatur Compliance Issues',
    'Following the May 15 surprise audit at Decatur, immediate corrective action is required for 2 critical findings. Please review the Findings tab in Audits and submit resolution plans by May 30.',
    'HQ', 'specific', 'a0000000-0000-0000-0000-000000000004', 'urgent', false,
    NOW() - INTERVAL '13 days');
 
 INSERT INTO announcement_reads (announcement_id, location_id, read_by, read_at) VALUES
-  ('an000001-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000001', 'Downtown Manager', NOW() - INTERVAL '1 day'),
-  ('an000001-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000002', 'Buckhead Manager', NOW() - INTERVAL '1 day'),
-  ('an000001-0000-0000-0000-000000000002', 'a0000000-0000-0000-0000-000000000001', 'Downtown Manager', NOW() - INTERVAL '3 days'),
-  ('an000001-0000-0000-0000-000000000002', 'a0000000-0000-0000-0000-000000000003', 'Midtown Manager', NOW() - INTERVAL '3 days'),
-  ('an000001-0000-0000-0000-000000000004', 'a0000000-0000-0000-0000-000000000004', 'Decatur Manager', NOW() - INTERVAL '12 days');
+  ('b8000001-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000001', 'Downtown Manager', NOW() - INTERVAL '1 day'),
+  ('b8000001-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000002', 'Buckhead Manager', NOW() - INTERVAL '1 day'),
+  ('b8000001-0000-0000-0000-000000000002', 'a0000000-0000-0000-0000-000000000001', 'Downtown Manager', NOW() - INTERVAL '3 days'),
+  ('b8000001-0000-0000-0000-000000000002', 'a0000000-0000-0000-0000-000000000003', 'Midtown Manager', NOW() - INTERVAL '3 days'),
+  ('b8000001-0000-0000-0000-000000000004', 'a0000000-0000-0000-0000-000000000004', 'Decatur Manager', NOW() - INTERVAL '12 days');
 
 INSERT INTO message_threads (id, subject, location_id, last_message_at, created_at) VALUES
-  ('th000001-0000-0000-0000-000000000001', 'Critical Findings — Immediate Action Required',
+  ('b9000001-0000-0000-0000-000000000001', 'Critical Findings — Immediate Action Required',
    'a0000000-0000-0000-0000-000000000004', NOW() - INTERVAL '8 days', NOW() - INTERVAL '13 days'),
-  ('th000001-0000-0000-0000-000000000002', 'Summer Menu Prep Questions',
+  ('b9000001-0000-0000-0000-000000000002', 'Summer Menu Prep Questions',
    'a0000000-0000-0000-0000-000000000002', NOW() - INTERVAL '1 day', NOW() - INTERVAL '2 days'),
-  ('th000001-0000-0000-0000-000000000003', 'Equipment Maintenance Request — Fryer',
+  ('b9000001-0000-0000-0000-000000000003', 'Equipment Maintenance Request — Fryer',
    'a0000000-0000-0000-0000-000000000005', NOW() - INTERVAL '3 days', NOW() - INTERVAL '5 days');
 
 INSERT INTO thread_messages (thread_id, sender, body, is_hq, read_at, created_at) VALUES
-  ('th000001-0000-0000-0000-000000000001', 'HQ', 'Hi Decatur team, we've reviewed the audit findings and need immediate corrective action on the two critical failures. Please submit your action plan by May 22.', true, NOW() - INTERVAL '12 days', NOW() - INTERVAL '13 days'),
-  ('th000001-0000-0000-0000-000000000001', 'Decatur Manager', 'Understood. We've already restocked the handwashing stations and ordered new temperature log sheets. Will submit full plan tomorrow.', false, NULL, NOW() - INTERVAL '12 days'),
-  ('th000001-0000-0000-0000-000000000001', 'HQ', 'Thanks for the quick response. Please also schedule a deep clean for the kitchen equipment by end of week.', true, NULL, NOW() - INTERVAL '8 days'),
-  ('th000001-0000-0000-0000-000000000002', 'HQ', 'Hey Buckhead, wanted to check in on your summer menu prep. Do you have enough stock ordered for the new items?', true, NOW() - INTERVAL '1 day', NOW() - INTERVAL '2 days'),
-  ('th000001-0000-0000-0000-000000000002', 'Buckhead Manager', 'We've got everything except the peach syrup — vendor says it's backordered until June 10. Can we substitute lemonade items until then?', false, NULL, NOW() - INTERVAL '1 day'),
-  ('th000001-0000-0000-0000-000000000003', 'Marietta Manager', 'Hi HQ, our #2 fryer has been running hot and we think it needs servicing before summer rush. Can we get a maintenance tech out this week?', false, NULL, NOW() - INTERVAL '5 days'),
-  ('th000001-0000-0000-0000-000000000003', 'HQ', 'On it. I've contacted our service partner — they can be there Thursday morning. Please have the fryer cool and accessible by 9am.', true, NULL, NOW() - INTERVAL '3 days');
+  ('b9000001-0000-0000-0000-000000000001', 'HQ', 'Hi Decatur team, we''ve reviewed the audit findings and need immediate corrective action on the two critical failures. Please submit your action plan by May 22.', true, NOW() - INTERVAL '12 days', NOW() - INTERVAL '13 days'),
+  ('b9000001-0000-0000-0000-000000000001', 'Decatur Manager', 'Understood. We''ve already restocked the handwashing stations and ordered new temperature log sheets. Will submit full plan tomorrow.', false, NULL, NOW() - INTERVAL '12 days'),
+  ('b9000001-0000-0000-0000-000000000001', 'HQ', 'Thanks for the quick response. Please also schedule a deep clean for the kitchen equipment by end of week.', true, NULL, NOW() - INTERVAL '8 days'),
+  ('b9000001-0000-0000-0000-000000000002', 'HQ', 'Hey Buckhead, wanted to check in on your summer menu prep. Do you have enough stock ordered for the new items?', true, NOW() - INTERVAL '1 day', NOW() - INTERVAL '2 days'),
+  ('b9000001-0000-0000-0000-000000000002', 'Buckhead Manager', 'We''ve got everything except the peach syrup — vendor says it''s backordered until June 10. Can we substitute lemonade items until then?', false, NULL, NOW() - INTERVAL '1 day'),
+  ('b9000001-0000-0000-0000-000000000003', 'Marietta Manager', 'Hi HQ, our #2 fryer has been running hot and we think it needs servicing before summer rush. Can we get a maintenance tech out this week?', false, NULL, NOW() - INTERVAL '5 days'),
+  ('b9000001-0000-0000-0000-000000000003', 'HQ', 'On it. I''ve contacted our service partner — they can be there Thursday morning. Please have the fryer cool and accessible by 9am.', true, NULL, NOW() - INTERVAL '3 days');
 
 INSERT INTO bulletin_posts (author, title, body, post_type, location_id, created_at) VALUES
   ('HQ', 'June All-Hands Meeting — June 3 at 2pm', 'All managers are invited to join the virtual all-hands meeting on June 3 at 2:00pm ET. Agenda: Q2 results, summer prep, and team recognition. Zoom link will be emailed Monday.', 'news', NULL, NOW() - INTERVAL '1 day'),

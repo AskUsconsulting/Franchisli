@@ -23,7 +23,7 @@ const STATUS_STYLES: Record<string, string> = {
   rejected:  "bg-red-100 text-red-700",
 };
 
-export default function TimesheetsClient({ sheets, role }: { sheets: Timesheet[]; role: "owner" | "employee" }) {
+export default function TimesheetsClient({ sheets, role }: { sheets: Timesheet[]; role: "owner" | "manager" | "employee" }) {
   const router = useRouter();
   const [open,   setOpen]   = useState(false);
   const [saving, setSaving] = useState(false);

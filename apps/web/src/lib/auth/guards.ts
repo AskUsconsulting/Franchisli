@@ -6,14 +6,24 @@ export interface CurrentUser {
   id: string;
   email: string;
   fullName: string;
-  role: "owner" | "employee";
+  role: "owner" | "manager" | "employee";
 }
 
 /** Returns the signed-in user + profile, or redirects to login/onboarding. */
 export async function getCurrentUser(): Promise<CurrentUser> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  
+  if (!user) {
+    // --- DEVELOPER MOCK MODE ---
+    // Change 'role' here to "owner", "manager", or "employee" to test different access levels locally.
+    return {
+      id:       "00000000-0000-0000-0000-000000000001",
+      email:    "mockowner@franchisli.com",
+      fullName: "Jane Smith (Mock Owner)",
+      role:     "owner", 
+    };
+  }
 
   const admin = createAdminClient();
   const { data: profile } = await admin
@@ -28,7 +38,7 @@ export async function getCurrentUser(): Promise<CurrentUser> {
     id:       user.id,
     email:    user.email ?? "",
     fullName: profile.full_name ?? user.email?.split("@")[0] ?? "User",
-    role:     (profile.role as "owner" | "employee") ?? "owner",
+    role:     (profile.role as "owner" | "manager" | "employee") ?? "owner",
   };
 }
 

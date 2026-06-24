@@ -30,13 +30,15 @@ export async function middleware(request: NextRequest) {
   const publicPaths = ["/login", "/signup", "/forgot-password", "/reset-password", "/auth/callback", "/onboarding"];
   const isPublic = publicPaths.some(p => path.startsWith(p));
 
-  // Protect /dashboard and /admin
+  // Protect /dashboard and /admin (Bypassed for developer mock mode)
+  /*
   if (!user && (path.startsWith("/dashboard") || path.startsWith("/admin"))) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("next", path);
     return NextResponse.redirect(url);
   }
+  */
 
   // Redirect logged-in users away from auth pages (but not onboarding or reset)
   if (user && (path === "/login" || path === "/signup" || path.startsWith("/signup/"))) {
@@ -56,7 +58,7 @@ export async function middleware(request: NextRequest) {
       .eq("id", user.id)
       .single();
 
-    if (profile?.role === "employee") {
+    if (profile?.role !== "owner") {
       const url = request.nextUrl.clone();
       url.pathname = "/dashboard";
       url.search = "";

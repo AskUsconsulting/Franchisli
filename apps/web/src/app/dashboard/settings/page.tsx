@@ -13,7 +13,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
   const admin = createAdminClient();
   const { data: profile } = await admin
     .from("profiles")
-    .select("full_name, role, business_name, franchise_id")
+    .select("full_name, role, business_name, franchise_id, location_id")
     .eq("id", user.id)
     .single();
 
@@ -23,13 +23,26 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
   //  - owner  → their own user id
   //  - employee → their franchise_id (points to the owner)
   const franchiseId = role === "owner" ? user.id : profile?.franchise_id;
+  const targetFranchiseId = franchiseId || "00000000-0000-0000-0000-000000000000";
 
-  // Team members in this franchise (employees)
-  const { data: team } = await admin
+  // Team members in this franchise/location:
+  // Owners see everyone in their franchise (employees or themselves)
+  // Employees see peers/owners in the same franchise or location
+  let query = admin
     .from("profiles")
-    .select("id, full_name, role")
-    .eq("franchise_id", franchiseId ?? "00000000-0000-0000-0000-000000000000")
-    .order("full_name");
+    .select("id, full_name, role");
+
+  if (role === "owner") {
+    query = query.or(`franchise_id.eq.${targetFranchiseId},id.eq.${targetFranchiseId}`);
+  } else {
+    const orConditions = [`franchise_id.eq.${targetFranchiseId}`, `id.eq.${targetFranchiseId}`];
+    if (profile?.location_id) {
+      orConditions.push(`location_id.eq.${profile.location_id}`);
+    }
+    query = query.or(orConditions.join(","));
+  }
+
+  const { data: team } = await query.order("full_name");
 
   const teamMembers = (team ?? []).map(m => ({
     id:        m.id,

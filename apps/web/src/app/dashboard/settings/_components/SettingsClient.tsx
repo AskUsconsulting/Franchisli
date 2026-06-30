@@ -248,9 +248,16 @@ function NotificationsTab() {
                 <p className="text-sm font-medium text-gray-900">{label}</p>
                 <p className="text-xs text-gray-400 mt-0.5">{desc}</p>
               </div>
-              <button onClick={() => setPrefs(p => ({ ...p, [key]: !p[key as keyof typeof p] }))}
-                className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 ${prefs[key as keyof typeof prefs] ? "bg-brand-600" : "bg-gray-200"}`}>
-                <span className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${prefs[key as keyof typeof prefs] ? "translate-x-6" : "translate-x-1"}`} />
+              <button
+                type="button"
+                onClick={() => setPrefs(p => ({ ...p, [key]: !p[key as keyof typeof p] }))}
+                className="relative w-11 h-6 rounded-full transition-colors flex-shrink-0"
+                style={{ backgroundColor: prefs[key as keyof typeof prefs] ? '#1e3a7a' : '#d1d5db' }}
+              >
+                <span
+                  className="absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform"
+                  style={{ transform: prefs[key as keyof typeof prefs] ? 'translateX(1.5rem)' : 'translateX(0.25rem)' }}
+                />
               </button>
             </div>
           ))}
